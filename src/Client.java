@@ -15,7 +15,7 @@ public class Client {
 	
 	public Client( Connector c){
 		connect=c;
-		try{  server= (ServerInterface) Naming.lookup("rmi://localhost/server");  }
+		try{  server= (ServerInterface) Naming.lookup("localhost");  }
 		catch( NotBoundException e ){ System.out.println("NoBound");}
 		catch( RemoteException e ){
 			System.out.println("RemoteExc"); System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
@@ -28,8 +28,10 @@ public class Client {
 	
 	public void sendStats( Vector<Stats> stats ){
 		System.out.println("Invio statistiche");
+		
 		try{ server.printStats( stats ); }
 		catch( RemoteException e ){}
+		System.out.println("Invio e stampo statistiche");
 	}
 	
 }

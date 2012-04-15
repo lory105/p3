@@ -12,13 +12,13 @@ public class MainRMI {
 
 		try{
 			ServerRMI server= new ServerRMI();
-			String serverName = "rmi://localhost/server";
+			String serverName = "localhost";
 			Naming.rebind( serverName, server);
 		}
 		catch( RemoteException e){ System.out.println("RemoteExc server"); }
 		catch( MalformedURLException e){ System.out.println("MalformedExc server"); }
 		
-		System.out.println("Server pronto");
+		//System.out.println("Server pronto");
 		
 	}
 	

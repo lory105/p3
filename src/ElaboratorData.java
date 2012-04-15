@@ -39,8 +39,8 @@ public class ElaboratorData extends Thread {
 				if( detection == -1 ){ // flag di fine simulazione, il client può inviare le statistiche della simulazione
 					System.out.println("elaborator passa stats al client");
 					
-					// evito di inviare i dati al client x ora xk non va client server
-					//connect.pushStats( stats );
+
+					connect.pushStats( stats );
 					throw new SecurityException();  // sollevo eccezione di interruzione così libero memoria
 				}
 				if( isInterrupted() ) throw new SecurityException();

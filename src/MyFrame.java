@@ -45,7 +45,9 @@ public class MyFrame extends JFrame{
 	// classe che gestisce la pressione del bottone stop
 	class stopClick implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			ta.setText("");
+			//ta.setText("");
+			closeAll();
+			System.exit(0);
 			//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // associamo l'evento di chiusura al solito bottone di chiusura
 		}
 	}
@@ -84,7 +86,7 @@ public class MyFrame extends JFrame{
 		super( title );
 		connect=c;
 		
-		setSize(700, 600);
+		setSize(650, 600);
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE);
 		
 		// collego i bottoni ai loro rispettivi listener
@@ -165,11 +167,13 @@ public class MyFrame extends JFrame{
 			      System.out.println("E' stato premuto il pulsante X rosso");
 			      if( ! start.isEnabled() )
 			    	  connect.closeAll();
+			      System.exit(0);
 			   }
 			   public void windowClosed(WindowEvent we) {
-				      System.out.println("E' stato premuto il pulsante X");
-				      if( ! start.isEnabled() )
-				    	  connect.closeAll();
+				  System.out.println("E' stato premuto il pulsante X");
+				  if( ! start.isEnabled() )
+					  connect.closeAll();
+				  System.exit(0);
 			   }
 		});
    

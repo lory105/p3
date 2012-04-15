@@ -18,7 +18,8 @@ public class NodeLSM extends Node {
 		if( (float)Math.random() <= (1-probAcceptLocation) )  return; // ignora il messaggio
 		
 		//if( isInterrupted() ) throw new SecurityException();
-		synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+		checkEndSimulazion();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		
 		energy-=energyToReceive;
 		if(energy <0 ) throw new ExcEndEnergy();
@@ -36,7 +37,8 @@ public class NodeLSM extends Node {
 			if( n == this){
 				if( findClone(mc) ){ 
 					//if( isInterrupted() ) throw new SecurityException();
-					synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+					checkEndSimulazion();
+					//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 					Node.detection=1; throw new ExcFindClone();
 				} 
 				Node.detection=1;
@@ -45,7 +47,8 @@ public class NodeLSM extends Node {
 			else{
 				// invio il messaggio di controllo al neighbor + vicino alla destinazione p del messaggio,
 				//if( isInterrupted() ) throw new SecurityException();
-				synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+				checkEndSimulazion();
+				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				energy-=energyToSend;
 				if(energy <0 ) throw new ExcEndEnergy();
 				sentMessages++;
@@ -57,7 +60,8 @@ public class NodeLSM extends Node {
 	
 	public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy, ExcFindClone, SecurityException{
 		//if( isInterrupted() ) throw new SecurityException();
-		synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+		checkEndSimulazion();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		energy-=energyToReceive;
 		if(energy <0 ) throw new ExcEndEnergy();
 		receivedMessages++;
@@ -67,7 +71,8 @@ public class NodeLSM extends Node {
 		// faccio la detection del clone
 		if( findClone(msg) ){
 			//if( isInterrupted() ) throw new SecurityException();
-			synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+			checkEndSimulazion();
+			//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 			Node.detection=1; throw new ExcFindClone();
 		}
 		Node.detection=1;
@@ -80,7 +85,8 @@ public class NodeLSM extends Node {
 		if( this == n ) return;
 		
 		//if( isInterrupted() ) throw new SecurityException();
-		synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+		checkEndSimulazion();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		energy-=energyToSend;
 		if(energy <0 ) throw new ExcEndEnergy();
 		sentMessages++;

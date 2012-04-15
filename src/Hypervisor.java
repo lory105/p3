@@ -34,16 +34,17 @@ public class Hypervisor extends Thread {
 	public Hypervisor( Connector c){ connect=c; } // devo togliere il public!!!!!!!!!!!!!!!!!!!!
 	
 	public void run(){
-		try{  // forse da spostare dentro il while, così finisce tutte le simulazioni!!!!
+		try{
 			
 		Node.setParamiters( this, probAcceptLocation, numLocationDestination, energyTot, energyToSend, energyToReceive, energyToSignature );
 		int nSimCont=1;
 		
-		connect.print(proto);
+		connect.print(proto + " in hyper");
 
 		while( nSimCont <= nSim ){
+			// serve per gestire il pulsante di STOP
 			if( isInterrupted() ) throw new SecurityException();
-			connect.print( "Inizio simulazione n." + nSimCont );
+			connect.print( "\nInizio simulazione n." + nSimCont );
 			
 			nodeActive=(numberNode+1);
 			findClone=false;
@@ -55,7 +56,8 @@ public class Hypervisor extends Thread {
 			findNeighbors();
 		
 			connect.print( "nodeActive: " + nodeActive);
-			
+
+			// serve per gestire il pulsante di STOP
 			if( isInterrupted() ){ throw new SecurityException(); }
 			
 			// creo e attivo il thread ActivateNode per attivare tutti i nodi
@@ -64,33 +66,45 @@ public class Hypervisor extends Thread {
 			
 	
 			synchronized (lockEndSimulation) {
-				while( !endSimulation ){// attendo che la simulazione termini
+				while( !endSimulation && nodeActive!=0 ){// attendo che la simulazione termini
 					lockEndSimulation.wait();
+				}
+			}
+			
+			
+			if( findClone ){
+				for( int x=0; x<listNode.size(); x++ ){
+					synchronized( listNode.get(x).bufferMessage ){
+						if( listNode.get(x).isInterrupted() == false ){
+							connect.print( "interrompo nodo " + listNode.get(x) );
+							listNode.get(x).interrupt();
+						}
+					}
 				}
 			}
 
 			connect.print( ( new Integer( listNode.size() ) ).toString() );
 			connect.print("invio dati all'elaboratore");
 			// invoco il lettore dei valori dei nodi!!
-			//connect.pushData( new Data( listNode, Node.getDetection() ) );
+			connect.pushData( new Data( listNode, Node.getDetection() ) );
 				
 			
 			connect.print( "endSimulation=" + endSimulation );
 			connect.print( "findClone=" + findClone );
 			connect.print( "nodeActive=" + nodeActive );
-			connect.print( "Terminara simulazione n." + nSimCont + "\n" );
+			connect.print( "Terminata simulazione n." + nSimCont );
 			nSimCont++;
 		}
 		
 		// passo una simulazione vuota che fungerà da flag per indicare che le simulazioni sono terminate
 		connect.print("invio dati sim vuota come flag all'elaboratore");
-		//connect.pushData( new Data(null, -1) );
+		connect.pushData( new Data(null, -1) );
 		
 		}
-   	 	// se il thread viene interrotto durante una wait o sleep ( quindi una simulazione è in atto )
+   	 	// se il thread viene interrotto (x esempio è stato premuto STOP ) durante una wait o sleep ( quindi una simulazione è in atto )
 		// quindi i nodi sono ancora attivi e la nSimCont è ancora in atto
 		catch( InterruptedException e){
-			connect.print( getName() + " terminated with InterruptedExc");
+			connect.print( getName() + "Hyper terminated with InterruptedExc");
 			if( listNode !=null ){  // se arrivo qui è sempre true!
 				Node.endSimulation=true;
 				for( int x=0; x<listNode.size(); x++ )
@@ -100,10 +114,10 @@ public class Hypervisor extends Thread {
 			}
 		}
 		
-   	 	// se la simulazione termina durante uno stato attivo del Hypervisor in cui faccio il controllo: if( isInterrupted() )
+   	 	// se la simulazione termina (x esempio è stato premuto STOP) durante uno stato attivo del Hypervisor in cui faccio il controllo: if( isInterrupted() )
 		// il controllo viene fatto solo in situazioni in cui i nodi non sono ancora attivati!!
 		catch( SecurityException e){
-			connect.print( getName() + " terminated with SecurityExc");
+			connect.print( getName() + "Hyper terminated with SecurityExc");
 			if( listNode !=null )
 				listNode.clear();
 		}
@@ -136,11 +150,11 @@ public class Hypervisor extends Thread {
 				connect.print( "Nodi creati" + listNode.size() + " Id nodo clonato: " + cloneRandomId);
 				
 				if( proto.equals("LSM") ){
-					connect.print( "creato nodo LSM");
+					connect.print( "creato nodo clone LSM");
 					listNode.add( new NodeLSM( cloneRandomId, p, energyTot ) );
 				}
 				else{
-					connect.print( "creato nodo RED");
+					connect.print( "creato nodo clone RED");
 					listNode.add( new NodeRED( cloneRandomId, p, energyTot ) );
 				}
 									
@@ -196,18 +210,17 @@ public class Hypervisor extends Thread {
 		connect.print( "trovato clone");
 		
 		
-		for( int x=0; x<listNode.size(); x++ ){
-			synchronized( listNode.get(x).bufferMessage ){
-				listNode.get(x).interrupt();
-			}
-		}
-		
+
+/*		
 		synchronized(lockEndSimulation){ 
 			endSimulation= true;
 			findClone=true;
-		//	lockEndSimulation.notify(); 
+			//lockEndSimulation.notify();
+			
 		}
-		
+*/
+		findClone=true;
+		endSimulation();
 	}
 
 	// viene invocata solo quando nodeActive==0, setta endSimulation dell'Hypervisor a true e lo risveglia
@@ -215,8 +228,9 @@ public class Hypervisor extends Thread {
 		
 		synchronized( lockEndSimulation ){ 
 			endSimulation=true;
+			// sveglio l'Hypervisor
 			lockEndSimulation.notify();
-			connect.print("END SIM SVEGLIO HYPER");
+			connect.print("END SIM SVEGLIATO HYPER");
 		}
 		
 	}
