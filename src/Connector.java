@@ -23,7 +23,6 @@ public class Connector {
 		
 		if ( values==null ) return false;
 		
-		Stats.setValues(values);
 		hyper.setParamiters( values );
 		
 		elaborator.start();
@@ -61,4 +60,8 @@ public class Connector {
 		elaborator.interrupt();
 		
 	}
+	
+	public final Object[] getParameters(){ return hyper.getParameters(); }
+	
+	
 }

@@ -8,69 +8,38 @@ import java.io.IOException;
 import java.io.Serializable;
 
 public class Stats implements Serializable {
-	// memorizzo i valori delle simulazioni cioè i valori riguardanti le simulazioni
-	static private Object[] values=null;
 	
 	private Vector<int[]> info = new Vector<int[]>();
+	private int detection;
 	
-	Stats( int[] sent, int[] received, int[] signature, int[] energy, int[] memory ){
+	Stats( int[] sent, int[] received, int[] signature, int[] energy, int[] memory, int d ){
 		info.add(sent);
 		info.add(received);
 		info.add(signature);
 		info.add(energy);
 		info.add(memory);
+		detection=d;
 	}
 	
 	
-	static public void setValues( Object[] v){
-		values=v;
-	}
-	
-	public static void getValue( FileWriter out2 ){
-
-		try{
-			
-			out2.append("Start sim:\n \\ \n");
-
-
-//			proto= (String) values[0];
-//			nSim= (Integer) values[1];
-//			numberNode =(Integer) values[2];
-//			radius =(Float) values[3];
-//			probAcceptLocation=(Float) values[4];
-//			numLocationDestination= (Integer) values[5];
-//			energyTot =(Integer) values[6];
-//			energyToSend=(Integer) values[7];
-//			energyToReceive=(Integer) values[8];
-//			energyToSignature=(Integer) values[9];
-			
-
-//			out2.append( "PROTO = " + ( (String) values[0]).toString() + "\n");
-//			System.out.println( "prova stampa " + values[0].toString() );
-//			out.append( "NSIM = " + values[1].toString() + "\n");
-//			out.append( "p = " + values[2].toString() + "\n");
-//			out.append( "g = " + values[3].toString() + "\n");
-//			out.append( "n = " + values[4].toString() + "\n");
+	public void printValues( FileWriter out ){
 		
+		// stampo tutti i valori [MIN MAX AVG SD] in questo ordine, per ogni variabile richiesta [ SENT MSM, RECEIVED MSG, SIGNATIRE .. ]
+		try{
+			for(int x=0; x<info.size(); x++){
+				for( int y=0; y< info.get(x).length; y++)
+					out.append(  Integer.toString( (info.get(x))[y] ) + " " );
+				
+				// da tolgiere !!!!!!!!!!!!!!
+				out.append("	");
+			}
+			out.append( Integer.toString(detection));
+
 		}
 		catch(FileNotFoundException e){ System.out.println("file not found"); }
 		catch(IOException ioe){	System.out.println("I/O errore"); }
 		
 	}
 	
-	public void getInfo( FileWriter out ){
-
-		try{
-			out.append( "PROTO = " + values[0].toString() + "\n");
-			out.append( "NSIM = " + values[1].toString() + "\n");
-			out.append( "p = " + values[2].toString() + "\n");
-			out.append( "g = " + values[3].toString() + "\n");
-			out.append( "n = " + values[4].toString() + "\n");
-			
-		}
-		catch(FileNotFoundException e){ System.out.println("file not found"); }
-		catch(IOException ioe){	System.out.println("I/O errore"); }
-		
-	}
 
 }

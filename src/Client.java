@@ -29,7 +29,7 @@ public class Client {
 	public void sendStats( Vector<Stats> stats ){
 		System.out.println("Invio statistiche");
 		
-		try{ server.printStats( stats ); }
+		try{ server.printStats( connect.getParameters(), stats ); }
 		catch( RemoteException e ){}
 		System.out.println("Invio e stampo statistiche");
 	}

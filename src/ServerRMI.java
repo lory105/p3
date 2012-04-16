@@ -15,21 +15,36 @@ public class ServerRMI extends UnicastRemoteObject implements ServerInterface{
 	public ServerRMI() throws RemoteException{ System.out.println("Server pronto"); }
 	
 	
-	public void printStats( Vector<Stats> s ) throws RemoteException{
+	public void printStats( Object[] v, Vector<Stats> s ) throws RemoteException{
 		
 //		synchronized( out ){
 			System.out.println("Server Rmi sta stampando su file");
 			try{
 				out=new FileWriter(new File("output.txt"),true);
-				out.append("Start simulation1:\n");
-				out.append("Start simulation2:\n");
+				
+				// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				out.append( "Simulation:\n");
+				
+				for( int x=0; x<s.size(); x++){
+					
+					// stampo i 10 valori riguardanti la simulazione
+					for(int y=0; y<v.length; y++){
+						out.append( v[y].toString() + " ");
+					}
+					
+					// da togliere !!!!!!!!!!!!!!!
+					out.append("	");
+					
+					s.get(x).printValues(out);
+					
+					out.append("\n");
+				}
+				
+
 				
 				
-				Stats.getValue(out);
 				
-				//for(int i=0; i<s.size(); i++){
-//					s.get(i).getInfo(out);
-//				}
+				
 			}
 			catch(FileNotFoundException e){ System.out.println("file not found"); }
 			catch(IOException ioe){	System.out.println("I/O errore"); }

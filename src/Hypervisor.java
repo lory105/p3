@@ -7,6 +7,9 @@ import java.util.*;
 public class Hypervisor extends Thread {
 	Connector connect;
 	
+	// array contentente i valori della simulazione
+	Object[] values=null;
+	
 	private String proto;
 	private int nSim=0;
 	
@@ -35,6 +38,7 @@ public class Hypervisor extends Thread {
 	
 	public void run(){
 		try{
+	
 			
 		Node.setParamiters( this, probAcceptLocation, numLocationDestination, energyTot, energyToSend, energyToReceive, energyToSignature );
 		int nSimCont=1;
@@ -263,19 +267,22 @@ public class Hypervisor extends Thread {
 	}
 	
 	
-	public void setParamiters( Object[] o){
-		proto= (String) o[0];
-		nSim= (Integer) o[1];
-		numberNode =(Integer) o[2];
-		radius =(Float) o[3];
-		probAcceptLocation=(Float) o[4];
-		numLocationDestination= (Integer) o[5];
-		energyTot =(Integer) o[6];
-		energyToSend=(Integer) o[7];
-		energyToReceive=(Integer) o[8];
-		energyToSignature=(Integer) o[9];
+	public void setParamiters( Object[] v){
+		values=v;
+		
+		proto= (String) v[0];
+		nSim= (Integer) v[1];
+		numberNode =(Integer) v[2];
+		radius =(Float) v[3];
+		probAcceptLocation=(Float) v[4];
+		numLocationDestination= (Integer) v[5];
+		energyTot =(Integer) v[6];
+		energyToSend=(Integer) v[7];
+		energyToReceive=(Integer) v[8];
+		energyToSignature=(Integer) v[9];
 	}
 	
+	public final Object[] getParameters(){ return values; }
 	
 	
 

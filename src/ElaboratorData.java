@@ -15,17 +15,19 @@ public class ElaboratorData extends Thread {
 
 	Vector<Data> bufferData=new Vector<Data>(); // dati ricevuti da elaborare
 	Vector<Stats> stats= new Vector<Stats>();   // statistiche pronte per essere inviate
+	int detectionGlobal=0;
 	
 	public ElaboratorData(Connector c){ connect=c; }
 	
 	public void run(){
-		System.out.println("elaborator parte run");
+		System.out.println("elaboratorData parte run");
 		try{
 			Data data;
 			Vector<Node> vn=null;
 			int detection;
-
+			
 			while(true){
+				detection=0;
 				if( isInterrupted() ) throw new SecurityException();
 				synchronized (bufferData){
 					
@@ -34,6 +36,7 @@ public class ElaboratorData extends Thread {
 					data= bufferData.remove(0);
 					vn = data.getListNode();
 					detection = data.getDetection();
+					if( detection ==1 ) detectionGlobal=detection;
 				}
 			
 				if( detection == -1 ){ // flag di fine simulazione, il client può inviare le statistiche della simulazione
@@ -55,17 +58,17 @@ public class ElaboratorData extends Thread {
 		
 	}
 	
-	
+	// leggo dalla lista dei nodi di una simulazione i valori contenuti nei nodi
 	private void readDate( Vector<Node> vc){
-		int sentMessagesTot=0,      sentMessagesMin=0,      sentMessagesMax=Integer.MAX_VALUE,      sentMessagesAvg=0,      sentMessagesSD=0;
-		int receivedMessagesTot=0,  receivedMessagesMin=0,  receivedMessagesMax=Integer.MAX_VALUE,  receivedMessagesAvg=0,  receivedMessagesSD=0;
-		int	signatureVerifiedTot=0, signatureVerifiedMin=0, signatureVerifiedMax=Integer.MAX_VALUE, signatureVerifiedAvg=0, signatureVerifiedSD=0; 
-		int energyUsedTot=0,        energyUsedMin=0,        energyUsedMax=Integer.MAX_VALUE,        energyUsedAvg=0,        energyUsedSD=0;
-		int memoryMsgTot=0,         memoryMsgMin=0,         memoryMsgMax=Integer.MAX_VALUE,         memoryMsgAvg=0,         memoryMsgSD=0;
+		int sentMessagesTot=0,      sentMessagesMin=Integer.MAX_VALUE,      sentMessagesMax=0,      sentMessagesAvg=0,      sentMessagesSD=0;
+		int receivedMessagesTot=0,  receivedMessagesMin=Integer.MAX_VALUE,  receivedMessagesMax=0,  receivedMessagesAvg=0,  receivedMessagesSD=0;
+		int	signatureVerifiedTot=0, signatureVerifiedMin=Integer.MAX_VALUE, signatureVerifiedMax=0, signatureVerifiedAvg=0, signatureVerifiedSD=0; 
+		int energyUsedTot=0,        energyUsedMin=Integer.MAX_VALUE,        energyUsedMax=0,        energyUsedAvg=0,        energyUsedSD=0;
+		int memoryMsgTot=0,         memoryMsgMin=Integer.MAX_VALUE,         memoryMsgMax=0,         memoryMsgAvg=0,         memoryMsgSD=0;
 		
 
-		for( int j=0; j< vc.size(); j++){
-			int[]datas = (vc.get(j).getDatas() );
+		for( int x=0; x< vc.size(); x++){
+			int[]datas = (vc.get(x).getDatas() );
 			
 			sentMessagesTot+=datas[0];
 			if( datas[0] < sentMessagesMin ) sentMessagesMin=datas[0];
@@ -104,7 +107,7 @@ public class ElaboratorData extends Thread {
 		int[] memoryMsg= { memoryMsgMin, memoryMsgMax, memoryMsgAvg, memoryMsgSD };
 		
 		System.out.println("Elaborator elabora dati");
-		stats.add( new Stats(sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg ) );
+		stats.add( new Stats( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal ) );
 		
 	}
 	
