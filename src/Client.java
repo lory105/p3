@@ -8,22 +8,33 @@ import java.net.*;
 //import manager.*;
 
 public class Client {
-	private static final String HOSTServer = "localhost";
+	private static final String HOSTServer = "localhos";
 	
 	private Connector connect=null;
 	private ServerInterface server=null;
 	
 	public Client( Connector c){
 		connect=c;
-		try{  server= (ServerInterface) Naming.lookup("localhost");  }
-		catch( NotBoundException e ){ System.out.println("NoBound");}
-		catch( RemoteException e ){
-			System.out.println("RemoteExc"); System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
-		}
-		catch( MalformedURLException e ){ System.out.println("MalformedURL");}
-		System.out.println("Client Pronto");
+
 	} 
 
+	public boolean connetcToServer( String nameServer){
+		try{
+			server= (ServerInterface) Naming.lookup( nameServer );
+			
+			// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			System.out.println("Client Pronto");
+			
+			return true;
+		}
+		catch( NotBoundException e ){ System.out.println("NoBound"); return false; }
+		catch( RemoteException e ){
+			System.out.println("RemoteExc"); System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
+			return false;
+		}
+		catch( MalformedURLException e ){ System.out.println("MalformedURL"); return false;}
+
+	}
 	
 	
 	public void sendStats( Vector<Stats> stats ){

@@ -63,5 +63,6 @@ public class Connector {
 	
 	public final Object[] getParameters(){ return hyper.getParameters(); }
 	
+	public boolean connectToServer( String nameServer){ return client.connetcToServer(nameServer); }
 	
 }

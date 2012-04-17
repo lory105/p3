@@ -35,7 +35,7 @@ public class MyFrame extends JFrame{
 		    ta.setText(""); // ripulisco tutto il testo in ta 
 			ta.append("Inizio ricerva file..\n");
 			
-			if( connect.readFile( tf1.getText() ) ){
+			if( connect.readFile( tf1.getText() ) && connect.connectToServer( tf2.getText() ) ){
 				ta.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
 				start.setEnabled(false);
 			}

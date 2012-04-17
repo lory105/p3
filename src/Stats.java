@@ -9,10 +9,10 @@ import java.io.Serializable;
 
 public class Stats implements Serializable {
 	
-	private Vector<int[]> info = new Vector<int[]>();
-	private int detection;
+	private Vector<Object[]> info = new Vector<Object[]>();
+	private Integer detection;
 	
-	Stats( int[] sent, int[] received, int[] signature, int[] energy, int[] memory, int d ){
+	Stats( Object[] sent, Object[] received, Object[] signature, Object[] energy, Object[] memory, Integer d ){
 		info.add(sent);
 		info.add(received);
 		info.add(signature);
@@ -28,12 +28,12 @@ public class Stats implements Serializable {
 		try{
 			for(int x=0; x<info.size(); x++){
 				for( int y=0; y< info.get(x).length; y++)
-					out.append(  Integer.toString( (info.get(x))[y] ) + " " );
+					out.append(  ( (info.get(x))[y] ).toString() + " " );
 				
 				// da tolgiere !!!!!!!!!!!!!!
 				out.append("	");
 			}
-			out.append( Integer.toString(detection));
+			out.append( detection.toString() );
 
 		}
 		catch(FileNotFoundException e){ System.out.println("file not found"); }
