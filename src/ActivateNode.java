@@ -1,4 +1,4 @@
-
+// object used to activate the nodes for each simulation
 
 import java.util.*; 
 

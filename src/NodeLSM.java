@@ -24,17 +24,18 @@ public class NodeLSM extends Node {
 		checkEnergy(energyToReceive);
 		
 		receivedMessages++;
-		NodeLSM n = null;
+		NodeLSM receiver = null;
 		
+		// g time
 		for(int i=0; i< locationDestination; i++){
-			Position p = new Position( (float)Math.random(), (float)Math.random() );
-			MessageControl mc = new MessageControl( (MessageClaim)msg, p);
+			Position pos = new Position( (float)Math.random(), (float)Math.random() );
+			MessageControl mc = new MessageControl( (MessageClaim)msg, pos);
 			
-			// neighbors è non vuoto
-			n = (NodeLSM)nearestNeighbor(p);
+			// buffer neighbors isn't empty
+			receiver = (NodeLSM)nearestNeighbor(pos);
 			
 			// se il + vicino alla destinazione del messagControll creato è il nodo stesso, faccio la detection
-			if( n == this){
+			if( receiver == this){
 				if( findClone(mc) ){ 
 					//if( isInterrupted() ) throw new SecurityException();
 					checkEndSimulazion();
@@ -51,7 +52,7 @@ public class NodeLSM extends Node {
 				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				checkEnergy(energyToSend);
 				sentMessages++;
-				sendMessageControl( n, mc );
+				sendMessageControl( receiver, mc );
 			}
 		}	
 	}
@@ -61,12 +62,10 @@ public class NodeLSM extends Node {
 		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
 		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-		energy-=energyToReceive;
-		if(energy <0 ) throw new ExcEndEnergy();
+		checkEnergy(energyToReceive);
+		
 		receivedMessages++;
-		
-		//hyper.connect.print("cerco se c'è clone2");
-		
+				
 		// faccio la detection del clone
 		if( findClone(msg) ){
 			//if( isInterrupted() ) throw new SecurityException();
@@ -86,8 +85,7 @@ public class NodeLSM extends Node {
 		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
 		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-		energy-=energyToSend;
-		if(energy <0 ) throw new ExcEndEnergy();
+		checkEnergy(energyToSend);
 		sentMessages++;
 		sendMessageControl( n, msg);
 	}

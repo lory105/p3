@@ -111,11 +111,11 @@ public class ElaboratorData extends Thread {
 		for( int x=0; x< vc.size(); x++){
 			int[]datas = (vc.get(x).getDatas() );
 			
-			sentMessagesSD= (float)( Math.pow( ( (float)datas[0]-sentMessagesAvg), 2 ) );
-			receivedMessagesSD= (float)( Math.pow( ( (float)datas[1]-sentMessagesAvg), 2 ) );
-			signatureVerifiedSD= (float)( Math.pow( ( (float)datas[2]-sentMessagesAvg), 2 ) );
-			energyUsedSD= (float)( Math.pow( ( (float)datas[3]-sentMessagesAvg), 2 ) );
-			memoryMsgSD= (float)( Math.pow( ( (float)datas[4]-sentMessagesAvg), 2 ) );
+			sentMessagesSD+= (float)( Math.pow( ( (float)datas[0]-sentMessagesAvg), 2 ) );
+			receivedMessagesSD+= (float)( Math.pow( ( (float)datas[1]-receivedMessagesAvg), 2 ) );
+			signatureVerifiedSD+= (float)( Math.pow( ( (float)datas[2]-signatureVerifiedAvg), 2 ) );
+			energyUsedSD+= (float)( Math.pow( ( (float)datas[3]-energyUsedAvg), 2 ) );
+			memoryMsgSD+= (float)( Math.pow( ( (float)datas[4]-memoryMsgAvg), 2 ) );
 		
 		}
 		

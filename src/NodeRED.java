@@ -20,18 +20,19 @@ public class NodeRED extends Node {
 		
 		receivedMessages++;
 		
-		NodeRED n =  null;
+		NodeRED receiver =  null;
 		
+		// g time
 		for(int i=0; i< locationDestination; i++){
 			
-			Position p = hashPosition( msg.getIdSender(), rand, i );
-			MessageControl mc = new MessageControl( (MessageClaim)msg, p);
+			Position pos = hashPosition( msg.getIdSender(), rand, i );
+			MessageControl mc = new MessageControl( (MessageClaim)msg, pos);
 			
 			// buffer neighbors isn't empty
-			n = (NodeRED)nearestNeighbor(p);
+			receiver = (NodeRED)nearestNeighbor(pos);
 			
 			// se il + vicino alla destinazione del messagControll creato è il nodo stesso, faccio la detection
-			if( n == this){
+			if( receiver == this){
 				if( findClone(mc) ){ 
 					//if( isInterrupted() ) throw new SecurityException();
 					checkEndSimulazion();
@@ -48,15 +49,43 @@ public class NodeRED extends Node {
 				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				checkEnergy(energyToSend);
 				sentMessages++;
-				sendMessageControl( n, mc );
+				sendMessageControl( receiver, mc );
 			}
 		}
 
 	}
 
 	
-	public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy{
+	public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy, ExcFindClone, SecurityException{
+		//if( isInterrupted() ) throw new SecurityException();
+		checkEndSimulazion();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+		checkEnergy(energyToReceive);
 		
+		receivedMessages++;
+				
+		Node receiver= nearestNeighbor( msg.getPosReceiver());
+
+		// if the receiver of the message is the node itself
+		if( this == receiver ){
+			if( findClone(msg) ){
+				//if( isInterrupted() ) throw new SecurityException();
+				checkEndSimulazion();
+				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+				Node.detection=1; throw new ExcFindClone();
+			}
+			Node.detection=1;
+		
+			memoryMsg.add(msg);
+			return;
+		}
+		
+		//if( isInterrupted() ) throw new SecurityException();
+		checkEndSimulazion();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
+		checkEnergy(energyToSend);
+		sentMessages++;
+		sendMessageControl( receiver, msg);
 	}
 	
 	

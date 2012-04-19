@@ -154,8 +154,7 @@ abstract public class Node extends Thread {
 	public void sendLocationClaim() throws ExcEndEnergy, SecurityException {
 		//hyper.connect.print("sendLocationClaim");
 		// spendo energia per firmare il messaggio
-		energy-=energyToSignature;
-		if(energy<0) throw new ExcEndEnergy();
+		checkEnergy(energyToSignature);
 		
 		MessageClaim mc = new MessageClaim( id, pos);
 		
@@ -165,8 +164,7 @@ abstract public class Node extends Thread {
 				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
 				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-				energy-= energyToSend;
-				if(energy<0) throw new ExcEndEnergy();
+				checkEnergy(energyToSend);
 				sentMessages++;
 				neighbors.get(x).pushMessage(mc);
 			}
