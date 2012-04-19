@@ -1,8 +1,6 @@
-
-
+// gui for users
 
 //import logic.*;
-
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
 
@@ -10,7 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 
 
-public class MyFrame extends JFrame{
+public class Gui extends JFrame{
 	Connector connect=null;
 	
 	JLabel label1=new JLabel("URL read value:");
@@ -83,7 +81,7 @@ public class MyFrame extends JFrame{
 		public int getPercent() { return( percent ); }
 	}
 	
-	public MyFrame(Connector c, String title){  // da togliere public !!!!!!!!!!!!!
+	public Gui(Connector c, String title){  // da togliere public !!!!!!!!!!!!!
 		super( title );
 		connect=c;
 		
@@ -196,7 +194,7 @@ public class MyFrame extends JFrame{
 		}
 	}
 	
-	public void cancelDisplay(){
+	public void clearDisplay(){
 		ta.setText("");
 	}
 	

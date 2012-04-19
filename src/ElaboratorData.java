@@ -14,7 +14,7 @@ public class ElaboratorData extends Thread {
 	Connector connect=null;
 
 	Vector<Data> bufferData=new Vector<Data>(); // dati ricevuti da elaborare
-	Vector<Stats> stats= new Vector<Stats>();   // statistiche pronte per essere inviate
+	Vector<Stat> stats= new Vector<Stat>();   // statistiche pronte per essere inviate
 	Integer detectionGlobal=0;
 	
 	public ElaboratorData(Connector c){ connect=c; }
@@ -136,7 +136,7 @@ public class ElaboratorData extends Thread {
 		
 		
 		System.out.println("Elaborator elabora dati");
-		stats.add( new Stats( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal ) );
+		stats.add( new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal ) );
 	}
 	
 	

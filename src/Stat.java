@@ -7,12 +7,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Serializable;
 
-public class Stats implements Serializable {
+public class Stat implements Serializable {
 	
 	private Vector<Object[]> info = new Vector<Object[]>();
 	private Integer detection;
 	
-	Stats( Object[] sent, Object[] received, Object[] signature, Object[] energy, Object[] memory, Integer d ){
+	Stat( Object[] sent, Object[] received, Object[] signature, Object[] energy, Object[] memory, Integer d ){
 		info.add(sent);
 		info.add(received);
 		info.add(signature);

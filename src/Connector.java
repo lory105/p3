@@ -12,7 +12,7 @@ import java.util.*;
 public class Connector {
 
 	private Hypervisor hyper=null;
-	private MyFrame mf=null;
+	private Gui mf=null;
 	private ReadURL reader=null;
 	private ElaboratorData elaborator=null;
 	private Client client=null;
@@ -32,7 +32,7 @@ public class Connector {
 		hyper.start();
 	}
 	
-	public void setParameters( Hypervisor h, MyFrame m, ReadURL r, ElaboratorData el, Client c ){
+	public void setParameters( Hypervisor h, Gui m, ReadURL r, ElaboratorData el, Client c ){
 		hyper=h;
 		mf=m;
 		reader=r;
@@ -52,7 +52,7 @@ public class Connector {
 		
 	}
 	
-	public void pushStats( Vector<Stats> stats ){
+	public void pushStats( Vector<Stat> stats ){
 		client.sendStats(stats);		
 	}
 	

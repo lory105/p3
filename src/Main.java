@@ -11,7 +11,7 @@ public class Main {
 		ReadURL reader = new ReadURL(connect );
 		Hypervisor hyper = new Hypervisor( connect );
 		ElaboratorData elaborator = new ElaboratorData( connect);
-		MyFrame mf= new MyFrame(connect, "Simulation" );
+		Gui mf= new Gui(connect, "Simulation" );
 		
 		connect.setParameters( hyper, mf, reader, elaborator, client );
 		

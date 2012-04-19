@@ -8,10 +8,10 @@ import java.net.*;
 //import manager.*;
 
 public class Client {
-	private static final String HOSTServer = "localhos";
+	private static String HOST = "localhost";
 	
 	private Connector connect=null;
-	private ServerInterface server=null;
+	private ReceiverStatInterface receiverStat=null;
 	
 	public Client( Connector c){
 		connect=c;
@@ -19,14 +19,15 @@ public class Client {
 	} 
 
 	public boolean connetcToServer( String nameServer){
+		HOST= nameServer;
 		try{
-			server= (ServerInterface) Naming.lookup( nameServer );
+			receiverStat= (ReceiverStatInterface) Naming.lookup( "rmi://" + HOST + "/ReceiverStat");
 			
-			boolean b = server.testConnection();
+			boolean testResponse = receiverStat.testConnection();
 			
 			// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			System.out.println("Client Pronto");
-			if( b )
+			if( testResponse )
 				return true;
 			else return false;
 		}
@@ -38,7 +39,7 @@ public class Client {
 		catch( RemoteException e ){
 			System.out.println("RemoteExc"); 
 			System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
-			connect.print( "RemoteException: some problem with server are occurred.." );
+			connect.print( "RemoteException: some problem with server are occurred, perhaps the server URL isn't correct.." );
 			return false;
 		}
 		catch( MalformedURLException e ){ 
@@ -50,10 +51,10 @@ public class Client {
 	}
 	
 	
-	public void sendStats( Vector<Stats> stats ){
+	public void sendStats( Vector<Stat> stats ){
 		System.out.println("Invio statistiche");
 		
-		try{ server.printStats( connect.getParameters(), stats ); }
+		try{ receiverStat.printStats( connect.getParameters(), stats ); }
 		catch( RemoteException e ){}
 		System.out.println("Invio e stampo statistiche");
 	}
