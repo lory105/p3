@@ -22,13 +22,14 @@ public class Connector {
 		Object[] values= reader.read( url );
 		
 		if ( values==null ) return false;
-		
 		hyper.setParamiters( values );
-		
+		return true;		
+	}
+	
+	// the file was read correctly from the URL and the server connection is established, then the simulation can start
+	public void start(){
 		elaborator.start();
 		hyper.start();
-		return true;
-		
 	}
 	
 	public void setParameters( Hypervisor h, MyFrame m, ReadURL r, ElaboratorData el, Client c ){

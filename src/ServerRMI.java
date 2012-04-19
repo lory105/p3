@@ -57,5 +57,6 @@ public class ServerRMI extends UnicastRemoteObject implements ServerInterface{
 		
 	}
 	
+	public boolean testConnection() throws RemoteException { return true;}
 
 }

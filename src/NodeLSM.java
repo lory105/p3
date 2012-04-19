@@ -21,8 +21,8 @@ public class NodeLSM extends Node {
 		checkEndSimulazion();
 		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		
-		energy-=energyToReceive;
-		if(energy <0 ) throw new ExcEndEnergy();
+		checkEnergy(energyToReceive);
+		
 		receivedMessages++;
 		NodeLSM n = null;
 		
@@ -49,8 +49,7 @@ public class NodeLSM extends Node {
 				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
 				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-				energy-=energyToSend;
-				if(energy <0 ) throw new ExcEndEnergy();
+				checkEnergy(energyToSend);
 				sentMessages++;
 				sendMessageControl( n, mc );
 			}

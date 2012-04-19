@@ -14,6 +14,6 @@ public class Main {
 		MyFrame mf= new MyFrame(connect, "Simulation" );
 		
 		connect.setParameters( hyper, mf, reader, elaborator, client );
-	
+		
 	}
 }

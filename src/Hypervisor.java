@@ -132,6 +132,8 @@ public class Hypervisor extends Thread {
 	private void generateNode(int nodiTot){
 		Position p=null;
 		boolean alreadyExistingPosition= false;
+		int rand = (int)(Math.random() *10) ; // random value for RED Node [ 0<= rand <10 ]
+		
 		// creo tutti i nodi clone incluso ( nodiTot )
 		for(int nodeCreated=0; nodeCreated<nodiTot ; nodeCreated++){
 			
@@ -159,7 +161,7 @@ public class Hypervisor extends Thread {
 				}
 				else{
 					connect.print( "creato nodo clone RED");
-					listNode.add( new NodeRED( cloneRandomId, p, energyTot ) );
+					listNode.add( new NodeRED( cloneRandomId, p, energyTot, rand ) );
 				}
 									
 				break;
@@ -173,7 +175,7 @@ public class Hypervisor extends Thread {
 				}
 				else{
 					//connect.print( "creato nodo con id " + nodeCreated );
-					listNode.add( new NodeRED( nodeCreated, p, energyTot ) );
+					listNode.add( new NodeRED( nodeCreated, p, energyTot, rand  ) );
 				}
 		}
 	}

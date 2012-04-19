@@ -144,7 +144,11 @@ abstract public class Node extends Thread {
 		synchronized( neighbors ){ if( neighbors.isEmpty() ) throw new ExcNoNeighbors(); }
 	} 
 	
-	
+	// function that subtract the current energy of a node and checks if this energy is terminated
+	protected void checkEnergy( int energyToSubtract) throws ExcEndEnergy{
+		energy-=energyToReceive;
+		if(energy <=0 ) throw new ExcEndEnergy();
+	}
 	
 	// creo il Location Claim e lo invio in broadcast a tutti i vicini ( LSM, RED )
 	public void sendLocationClaim() throws ExcEndEnergy, SecurityException {
@@ -199,18 +203,17 @@ abstract public class Node extends Thread {
 		checkEndSimulazion();
 		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		
-		// verifico la firma
-		energy-=energyToSignature;
-		if( energy < 0 ) throw new ExcEndEnergy();
+		checkEnergy(energyToSignature);
+		
 		signatureVerified++;
 		
 		int idSender = msg.getIdSender();
 		Position posSender = msg.getPosSender();
 		
-		// faccio la detection controllando me stesso
+		// detection about me
 		if(idSender == id && ! posSender.equals(pos) ) { hyper.connect.print("TROVATO!!!!!!!!!!!\n"); return true;} 
 		
-		// faccio la detection controllando tra i messaggi memorizzati memoryMsg
+		// detection about of my messages stored in buffer memoryMsg
 		synchronized (memoryMsg) {
 			for(int i=0; i < memoryMsg.size(); i++ ){
 				//if( isInterrupted() ) throw new SecurityException();

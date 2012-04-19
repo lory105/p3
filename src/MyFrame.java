@@ -36,8 +36,9 @@ public class MyFrame extends JFrame{
 			ta.append("Inizio ricerva file..\n");
 			
 			if( connect.readFile( tf1.getText() ) && connect.connectToServer( tf2.getText() ) ){
-				ta.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
 				start.setEnabled(false);
+				ta.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
+				connect.start();
 			}
 		}
 	}
@@ -55,8 +56,8 @@ public class MyFrame extends JFrame{
 	// classe che gestisce la pressione del bottone setUrl
 	class setUrlClick implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-			ta.setText("");
-			tf1.setText("http://www.math.unipd.it/~conti/teaching/PCD1112/project_configRED.txt");
+			//ta.setText("");
+			tf1.setText("http://www.math.unipd.it/~conti/teaching/PCD1112/project_config.txt");
 			tf2.setText("localhost");
 		}
 	}

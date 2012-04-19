@@ -22,17 +22,30 @@ public class Client {
 		try{
 			server= (ServerInterface) Naming.lookup( nameServer );
 			
+			boolean b = server.testConnection();
+			
 			// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			System.out.println("Client Pronto");
-			
-			return true;
+			if( b )
+				return true;
+			else return false;
 		}
-		catch( NotBoundException e ){ System.out.println("NoBound"); return false; }
+		catch( NotBoundException e ){ 
+			System.out.println("NoBound");
+			connect.print( "NotBoundException: perhaps the server URL isn't correct.." );
+			return false; 
+		}
 		catch( RemoteException e ){
-			System.out.println("RemoteExc"); System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
+			System.out.println("RemoteExc"); 
+			System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
+			connect.print( "RemoteException: some problem with server are occurred.." );
 			return false;
 		}
-		catch( MalformedURLException e ){ System.out.println("MalformedURL"); return false;}
+		catch( MalformedURLException e ){ 
+			System.out.println("MalformedURL");
+			connect.print( "MalformedURLException: perhaps the server URL isn't correct.." );
+			return false;
+			}
 
 	}
 	
