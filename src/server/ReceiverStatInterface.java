@@ -1,0 +1,18 @@
+package server;
+// interface of remote object that receives and prints statistics
+
+//import Stat;
+
+import java.rmi.*;
+import java.util.*;
+
+
+public interface ReceiverStatInterface extends Remote {
+	
+	// function for connection test
+	public boolean testConnection() throws RemoteException;
+	
+	public void printStats( Object[] v,  Vector<client.logic.Stat> stat) throws RemoteException;
+	
+}
+
