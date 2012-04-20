@@ -16,6 +16,7 @@ public class ElaboratorData extends Thread {
 	Vector<Data> bufferData=new Vector<Data>(); // dati ricevuti da elaborare
 	Vector<Stat> stats= new Vector<Stat>();   // statistiche pronte per essere inviate
 	Integer detectionGlobal=0;
+	int simulationNumber=0;
 	
 	public ElaboratorData(Connector c){ connect=c; }
 	
@@ -41,9 +42,8 @@ public class ElaboratorData extends Thread {
 			
 				if( detection == -1 ){ // flag di fine simulazione, il client può inviare le statistiche della simulazione
 					System.out.println("elaborator passa stats al client");
-					
-
 					connect.pushStats( stats );
+					simulationNumber=0;
 					throw new SecurityException();  // sollevo eccezione di interruzione così libero memoria
 				}
 				if( isInterrupted() ) throw new SecurityException();
@@ -90,16 +90,9 @@ public class ElaboratorData extends Thread {
 			if( datas[4] < memoryMsgMin ) memoryMsgMin=datas[4];
 			if( datas[4] > memoryMsgMax ) memoryMsgMax=datas[4];
 			
-		}
-		
-		// calcolo le medie dei valori, arrotondando il valore a due cifre dopo la virgola
-//		sentMessagesAvg= 	  (float)( Math.round( ( (float)sentMessagesTot/(float)vc.size()      ) *100.0 ) /100f  );
-//		receivedMessagesAvg=  (float)( Math.round( ( (float)receivedMessagesTot/(float)vc.size()  ) *100.0 ) /100f  );
-//		signatureVerifiedAvg= (float)( Math.round( ( (float)signatureVerifiedTot/(float)vc.size() ) *100.0 ) /100f  );
-//		energyUsedAvg= 		  (float)( Math.round( ( (float)energyUsedTot/(float)vc.size()        ) *100.0 ) /100f  );
-//		memoryMsgAvg=  		  (float)( Math.round( ( (float)memoryMsgTot/(float)vc.size()         ) *100.0 ) /100f  );
-//		
+		}	
 
+		// calculating the averages
 		sentMessagesAvg= 	  roundValues( (float)sentMessagesTot/(float)vc.size() );
 		receivedMessagesAvg=  roundValues ( (float)receivedMessagesTot/(float)vc.size() );
 		signatureVerifiedAvg= roundValues( (float)signatureVerifiedTot/(float)vc.size() );
@@ -107,7 +100,7 @@ public class ElaboratorData extends Thread {
 		memoryMsgAvg=  		  roundValues( (float)memoryMsgTot/(float)vc.size() );
 		 
 		
-		// calcolare le medie ponderate!!!!!!!!!!!!!!!!!!!!!		
+		// calculating the standard deviation		
 		for( int x=0; x< vc.size(); x++){
 			int[]datas = (vc.get(x).getDatas() );
 			
@@ -127,7 +120,7 @@ public class ElaboratorData extends Thread {
 		memoryMsgSD= roundValues( (float)Math.sqrt( memoryMsgSD/(float)vc.size() ) );
 
 		
-		
+ 
 		Object[] sentMessages= { sentMessagesMin, sentMessagesMax, sentMessagesAvg, sentMessagesSD };
 		Object[] receivedMessages= { receivedMessagesMin, receivedMessagesMax, receivedMessagesAvg, receivedMessagesSD };
 		Object[] signatureVerified= { signatureVerifiedMin, signatureVerifiedMax, signatureVerifiedAvg, signatureVerifiedSD };
@@ -136,7 +129,11 @@ public class ElaboratorData extends Thread {
 		
 		
 		System.out.println("Elaborator elabora dati");
-		stats.add( new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal ) );
+		Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal );
+		stats.add( stat );
+		
+		simulationNumber++;
+		connect.print( "\n" + simulationNumber + ") " + stat.printValues(), 1);
 	}
 	
 	

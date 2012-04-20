@@ -11,8 +11,10 @@ import java.awt.event.*;
 public class Gui extends JFrame{
 	Connector connect=null;
 	
-	JLabel label1=new JLabel("URL read value:");
-	JLabel label2=new JLabel("URL sent value:");
+	JLabel labelUrlRead=new JLabel("URL read value:");
+	JLabel labelUrlSent=new JLabel("URL sent value:");
+	JLabel labelInformationSimulation=new JLabel("Simulation progress:");
+	JLabel labelOutputSent=new JLabel("Value sent:");
 	
 	// link mio dropbox
 	JTextField tf1 = new JTextField("http://dl.dropbox.com/u/24729735/project_configLSM.txt");
@@ -24,18 +26,18 @@ public class Gui extends JFrame{
 	JButton stop = new JButton("Stop");
 	JButton setUrl = new JButton("Default URL");
 
-	JTextArea ta = new JTextArea(35,40);
-	
+	JTextArea textAreaInformation = new JTextArea(35,40);
+	JTextArea textAreaOutput = new JTextArea(35,40);
 	
 	// classe che gestisce la pressione del bottone start
 	class startClick implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-		    ta.setText(""); // ripulisco tutto il testo in ta 
-			ta.append("Inizio ricerva file..\n");
+		    textAreaInformation.setText(""); // ripulisco tutto il testo in ta 
+			textAreaInformation.append("Inizio ricerva file..\n");
 			
 			if( connect.readFile( tf1.getText() ) && connect.connectToServer( tf2.getText() ) ){
 				start.setEnabled(false);
-				ta.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
+				textAreaInformation.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
 				connect.start();
 			}
 		}
@@ -85,7 +87,7 @@ public class Gui extends JFrame{
 		super( title );
 		connect=c;
 		
-		setSize(650, 600);
+		setSize(900, 630);
 //		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE);
 		
 		// collego i bottoni ai loro rispettivi listener
@@ -93,6 +95,7 @@ public class Gui extends JFrame{
 		stop.addActionListener(new stopClick());
 		setUrl.addActionListener( new setUrlClick());
 
+		//labelInformationSimulation.setFont() !!!!!!!!!!!!!!!!!!!
 		
 		JPanel panel = new JPanel();
 		GroupLayout layout = new GroupLayout(panel);
@@ -108,7 +111,8 @@ public class Gui extends JFrame{
 		fr.add(stop);
 		fr.add(setUrl);
 
-		JScrollPane sc = new JScrollPane(ta);
+		JScrollPane scrollPaneInformation = new JScrollPane(textAreaInformation);
+		JScrollPane scrollPaneOutput = new JScrollPane(textAreaOutput);
 		   
 		// Turn on automatically adding gaps between components: crea in automatico lo spazio tra un componente e l'altro
 		layout.setAutoCreateGaps(true);
@@ -128,9 +132,9 @@ public class Gui extends JFrame{
 		//
 		// Variable indentation is used to reinforce the level of grouping.
 		hGroup.addGroup(layout.createParallelGroup().
-			addComponent(label1).addComponent(label2));
+			addComponent(labelUrlRead).addComponent(labelUrlSent).addComponent(labelInformationSimulation).addComponent(labelOutputSent) );
 		hGroup.addGroup(layout.createParallelGroup().
-			addComponent(tf1).addComponent(tf2).addComponent(fr).addComponent(sc) );
+			addComponent(tf1).addComponent(tf2).addComponent(fr).addComponent(scrollPaneInformation).addComponent(scrollPaneOutput) );
 
 		
 		layout.setHorizontalGroup(hGroup);
@@ -144,9 +148,10 @@ public class Gui extends JFrame{
 		// the second label and text field. By using a sequential group
 		// the labels and text fields are positioned vertically after one another.
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-		   addComponent(label1).addComponent(tf1));
+		   addComponent(labelUrlRead).addComponent(tf1));
 		vGroup.addGroup(layout.createParallelGroup(Alignment.BASELINE).
-		   addComponent(label2).addComponent(tf2));
+		   addComponent(labelUrlSent).addComponent(tf2));
+		
 		   
 		// meglio fare array di parallel gruop per salvare tutte le colonne e le righe!
 		GroupLayout.ParallelGroup pg2 = layout.createParallelGroup(Alignment.CENTER);
@@ -155,11 +160,14 @@ public class Gui extends JFrame{
 		  
 		GroupLayout.ParallelGroup pg3 = layout.createParallelGroup(Alignment.CENTER);
 		vGroup.addGroup(pg3);
-		pg3.addComponent(sc);
+		pg3.addComponent(labelInformationSimulation, Alignment.LEADING).addComponent(scrollPaneInformation);
+		
+		GroupLayout.ParallelGroup pg4 = layout.createParallelGroup(Alignment.CENTER);
+		vGroup.addGroup(pg4);
+		pg4.addComponent(labelOutputSent, Alignment.LEADING).addComponent(scrollPaneOutput);
 
 
 		layout.setVerticalGroup(vGroup);
-	
 		
 		addWindowListener( new WindowAdapter() {
 			   public void windowClosing(WindowEvent we) {
@@ -183,19 +191,21 @@ public class Gui extends JFrame{
 		
 	}
 	
-	
-	public void printDisplay( String s ){
-		synchronized( ta ){
-			//Object target = "Instance of the main thread";
-			//EventQueue eventQueue = Toolkit.getDefaultToolkit().getSystemEventQueue();
-			//eventQueue.postEvent( new SimpleAWTEvent( target, s, 1 ));
-			
-			ta.append( s + "\n");
-		}
+	// function to print some text in the Gui's text areas
+	public void printDisplay( String s, int position){
+		if(position == 0)
+			synchronized( textAreaInformation ){
+				textAreaInformation.append( s + "\n");
+			}
+		else
+			synchronized( textAreaOutput ){			
+				textAreaOutput.append( s );
+			}
 	}
 	
+	
 	public void clearDisplay(){
-		ta.setText("");
+		textAreaInformation.setText("");
 	}
 	
 	private void closeAll(){
@@ -205,7 +215,7 @@ public class Gui extends JFrame{
 	protected void processEvent( AWTEvent event){
 		if ( event instanceof SimpleAWTEvent ){
 			SimpleAWTEvent ev = (SimpleAWTEvent) event;
-			ta.setText( ev.getStr() );         // access GUI component
+			textAreaInformation.setText( ev.getStr() );         // access GUI component
 			//progressBar.setValue( ev.getPercent() );  // access GUI component
 		}
 		else{ // other events go to the system default process event handler

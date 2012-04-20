@@ -33,18 +33,18 @@ public class Client {
 		}
 		catch( NotBoundException e ){ 
 			System.out.println("NoBound");
-			connect.print( "NotBoundException: perhaps the server URL isn't correct.." );
+			connect.print( "NotBoundException: perhaps the server URL isn't correct..", 0 );
 			return false; 
 		}
 		catch( RemoteException e ){
 			System.out.println("RemoteExc"); 
 			System.out.println( e.getMessage() + "\n" + e.getCause().getMessage() );
-			connect.print( "RemoteException: some problem with server are occurred, perhaps the server URL isn't correct.." );
+			connect.print( "RemoteException: some problem with server are occurred, perhaps the server URL isn't correct..", 0 );
 			return false;
 		}
 		catch( MalformedURLException e ){ 
 			System.out.println("MalformedURL");
-			connect.print( "MalformedURLException: perhaps the server URL isn't correct.." );
+			connect.print( "MalformedURLException: perhaps the server URL isn't correct..", 0 );
 			return false;
 			}
 

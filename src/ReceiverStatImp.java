@@ -33,7 +33,10 @@ public class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStat
 					// da togliere !!!!!!!!!!!!!!!
 					out.append("	");
 					
-					s.get(x).printValues(out);
+					
+					String sx = new String("haha");
+					out.append( (s.get(x).printValues()) );
+					//out.append( sx );
 					
 					out.append("\n");
 				}

@@ -40,10 +40,9 @@ public class Connector {
 		client=c;
 	}
 	
-	// stampa s nella JTextArea in MyFrame
-	public void print( String s){
-		//System.out.println(s);
-		mf.printDisplay(s);
+	// function to print some text in the Gui's text areas
+	public void print( String s, int position){
+		mf.printDisplay(s, position);
 	}
 	
 	// alla fine di ogni singola simulazione passo il vettore di nodi all' EladoratorData che ne legge i dati 

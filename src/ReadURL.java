@@ -55,7 +55,8 @@ public class ReadURL {
 			             else{ values[x]= new Integer( Integer.parseInt( inputLine ) ); }
 		              }
 		              
-		              connect.print( variable[x] + "=" + values[x] );
+		              connect.print( variable[x] + "=" + values[x], 0 );
+		              connect.print( values[x].toString() + " ", 1 );
 		              read++;
 		           }
 	            }
@@ -67,9 +68,9 @@ public class ReadURL {
 	 	 in.close();
 	 	 
        } // fine try
-       catch ( ErrReadFile errR){ connect.print("File in lettura non corretto"); return null; }
-       catch ( MalformedURLException UrlErr ){ connect.print("Struttura URL non corretta."); return null; }
-       catch ( IOException IOErr ){ connect.print("Errore Input Output:\nassicurarsi di essere connessi alla rete o controllare l'URL inserita."); return null; }
+       catch ( ErrReadFile errR){ connect.print("File in lettura non corretto", 0); return null; }
+       catch ( MalformedURLException UrlErr ){ connect.print("Struttura URL non corretta.", 0); return null; }
+       catch ( IOException IOErr ){ connect.print("Errore Input Output:\nassicurarsi di essere connessi alla rete o controllare l'URL inserita.", 0); return null; }
 	 
       return values;
    }

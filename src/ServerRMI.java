@@ -14,7 +14,7 @@ public class ServerRMI {
 		String receiverStatName = "rmi://" + HOST + "/ReceiverStat";
 		Naming.rebind( receiverStatName, receiverStat );
 		
-		System.out.println("Server pronto");
+		System.out.println("Server ready");
 		
 	}
 }
