@@ -1,7 +1,5 @@
+// common interface of remote object that receives and prints statistics
 package server;
-// interface of remote object that receives and prints statistics
-
-//import Stat;
 
 import java.rmi.*;
 import java.util.*;

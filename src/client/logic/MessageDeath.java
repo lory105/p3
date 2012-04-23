@@ -1,3 +1,4 @@
+// message sent from a node when it ends its energy to all its neighbors 
 package client.logic;
 
 

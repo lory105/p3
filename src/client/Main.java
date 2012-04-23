@@ -13,9 +13,9 @@ public class Main {
 
 		Connector connect= new Connector();
 		Client client = new Client( connect );
-		ReadURL reader = new ReadURL(connect );
-		Hypervisor hyper = new Hypervisor( connect );
-		ElaboratorData elaborator = new ElaboratorData( connect);
+		ReadURL reader = ReadURL.getInstance(connect);
+		Hypervisor hyper = Hypervisor.getInstance( connect );
+		ElaboratorData elaborator = ElaboratorData.getInstance(connect);
 		Gui mf= new Gui(connect, "Simulation" );
 		
 		connect.setParameters( hyper, mf, reader, elaborator, client );

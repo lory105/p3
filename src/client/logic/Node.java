@@ -1,19 +1,18 @@
 package client.logic;
 
-
 import java.util.*;
 
 import client.exception.ExcEndEnergy;
 import client.exception.ExcFindClone;
 import client.exception.ExcNoNeighbors;
 
+
 abstract public class Node extends Thread {
 	static Hypervisor hyper=null;
-	static int detection = 0; 	   // tiene traccia se almeno un nodo ha effettuato la detection di un clone 0 (false)
+	static int detection = 0; 	   // detection flag. if almost one node makes detection detection==1
 	static Object lockEndSim = new Object();
 	static boolean endSimulation = false;
 	
-	// da mettere tutti final
 	static float probAcceptLocation;       // p
 	static int locationDestination;        // g
 	static int energyTot;
@@ -21,14 +20,13 @@ abstract public class Node extends Thread {
 	static int energyToReceive;
 	static int energyToSignature;
 	
-	//static Boolean endSimulation=new Boolean(false);  // i nodi prima di fare un'azione si sincronizzano qui per vedere se è stato trovato un clone
 	
 	int id;
 	Position pos=null;
 	int energy=0;
 	
     Vector<Node> neighbors= new Vector<Node>();
-    Vector<MessageControl> memoryMsg= new Vector<MessageControl>(); // vettore con tutti i messaggi DI CONTROLLO che sono passati per questo nodo
+    Vector<MessageControl> memoryMsg= new Vector<MessageControl>();
 	Vector<Message> bufferMessage = new Vector<Message>();
     
 	int sentMessages=0;
@@ -55,25 +53,16 @@ abstract public class Node extends Thread {
 	
 	public void run(){
 		try{
-			//if( isInterrupted() ) throw new SecurityException();
 			checkEndSimulazion();
-			//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 			checkEndNeighbors();
-			//synchronized( neighbors ){ if( neighbors.isEmpty() ) throw new ExcNoNeighbors(); }
 			sendLocationClaim(); 
 			Message msg=null;
 			
-//			hyper.connect.print( this.getName() + "ha terminato. ho inviato msgClaim" + sentMessages + "x" + neighbors.size() + "vicini --" );
- 
-
 			while(true){
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				checkEndNeighbors();
-				//synchronized( neighbors ){ if( neighbors.isEmpty() ) throw new ExcNoNeighbors(); }
 				synchronized( bufferMessage ){
-					// se non ho messaggi nel buffer da gestire faccio wait() sul bufferMessage
+					// if a node hasn't message to manage, it waits over bufferMessage
 					while( bufferMessage.isEmpty() ){
 						checkEndSimulazion();
 						//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
@@ -82,34 +71,25 @@ abstract public class Node extends Thread {
 						//if( isInterrupted() ) throw new SecurityException();
 						checkEndSimulazion();
 						//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-						// se un nodo si sveglia => gli è stato inviato un messaggio
+						// if a node wakes up => it has received a message
 						hyper.nodeActive(); 
 					}
 					
 					msg = bufferMessage.remove(0);
 				}
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				if( msg instanceof MessageControl){
-					//hyper.connect.print("receiveMessControl");
 					receiveMessageControl( (MessageControl)msg); }
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				if( msg instanceof MessageClaim  ){ 
-					//hyper.connect.print("receiveMessClai");
 					receiveMessageClaim( ((MessageClaim)msg) ); }
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-				if( msg instanceof MessageDeath  ){ 
-					//hyper.connect.print("receiveMessDeath"); 
+				if( msg instanceof MessageDeath  ){  
 					receiveMessageDeath( (MessageDeath)msg); }				
 			}
 
 		}
-		// se il nodo è interrotto in uno stato attivo
+		// if node is interrupted during an active state se il nodo è interrotto in uno stato attivo
 		catch( SecurityException e){
    	 		hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
 
@@ -117,33 +97,29 @@ abstract public class Node extends Thread {
    	 		hyper.nodeNotActive();
    	 	}
 
-		// se il nodo è interrotto in uno stato di wait
+		// if node is interrupted during an wait state 
 		catch( InterruptedException e){
    	 		hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
    	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
-   	 		//hyper.nodeNotActive();
    	 	}
 
 		catch( ExcNoNeighbors e){ hyper.nodeNotActive(); }
-
 		catch( ExcFindClone e ){ 
 			hyper.print("CLONE EXIT FIND", 0);
 			hyper.findClone(); hyper.nodeNotActive();}
 
 		catch( ExcEndEnergy e){
-			// mando un mess a tutti i vicini che sono morto e avviso l'hypervisior
-			hyper.print( getName()+ " ExcEndEnergy, inviati" + sentMessages + "x" + neighbors.size() + "vicini --" , 0);
 			sendMessageDeath();
 			hyper.nodeNotActive();
 		}
 		
 	}
 	
-
-	
 	
 	public void checkEndSimulazion() throws SecurityException{
+		//if( isInterrupted() ) throw new SecurityException();
 		if( endSimulation ) throw new SecurityException();
+		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 	}
 	
 	public void checkEndNeighbors() throws ExcNoNeighbors{
@@ -156,20 +132,16 @@ abstract public class Node extends Thread {
 		if(energy <=0 ) throw new ExcEndEnergy();
 	}
 	
-	// creo il Location Claim e lo invio in broadcast a tutti i vicini ( LSM, RED )
+	// creates the Location Claim and sends it in broadcast to all neighbors [ LSM, RED ]
 	public void sendLocationClaim() throws ExcEndEnergy, SecurityException {
-		//hyper.connect.print("sendLocationClaim");
-		// spendo energia per firmare il messaggio
 		checkEnergy(energyToSignature);
 		
 		MessageClaim mc = new MessageClaim( id, pos);
 		
-		// invio il MessagClaim a tutti i vicini
+		// sends message to all neighbors
 		synchronized( neighbors ){
 			for( int x=0; x< neighbors.size(); x++){
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				checkEnergy(energyToSend);
 				sentMessages++;
 				neighbors.get(x).pushMessage(mc);
@@ -208,10 +180,7 @@ abstract public class Node extends Thread {
 	
 	
 	public boolean findClone( MessageControl msg ) throws ExcEndEnergy, SecurityException{
-		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
-		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-		
 		checkEnergy(energyToSignature);
 		
 		signatureVerified++;
@@ -226,9 +195,7 @@ abstract public class Node extends Thread {
 		// detection about of my messages stored in buffer memoryMsg
 		synchronized (memoryMsg) {
 			for(int i=0; i < memoryMsg.size(); i++ ){
-				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				if( idSender == memoryMsg.get(i).getIdSender() &&  posSender != memoryMsg.get(i).getPosSender() )
 					return true;
 			}
@@ -238,12 +205,11 @@ abstract public class Node extends Thread {
 	}
 	
 
-	
-	// inserisco il messaggio che sto inviando nel buffer del nodo ricevente 
+	// pushes the message to sent in buffer messages of receiver node 
 	public void pushMessage( Message msg ){
 	
 		synchronized( bufferMessage ){
-		// se ricevo un messaggio di un vicino che è morto, lo inserisco all'inizio del bufferMessage
+		// if receided a death message from a neighbor, puts it in first position of bufferMessage
 			if( msg instanceof MessageDeath ) bufferMessage.add(0, msg);
 			else bufferMessage.add(msg);
 			
@@ -253,10 +219,8 @@ abstract public class Node extends Thread {
 	
 	
 	
-	
-	// ritorna il nodo vicino più "vicino" alla posizione del messaggio ricevuto, controllando ank la posizione propria
-	public Node nearestNeighbor(Position p){
-		// inizialmente assegno la posizione del nodo stesso come la posizione più vicina a p (= destinazione del messaggio ) 
+	// returns the nearest neighbor to the position p, also monitoring own position
+	public Node nearestNeighbor(Position p){ 
 		Node nearestNode = this;
 		float minDistance = Hypervisor.pythagora( pos, p);
 		float distance=0;

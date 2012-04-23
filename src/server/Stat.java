@@ -22,8 +22,7 @@ public class Stat implements Serializable {
 	public String printValues(){
 		String output=new String("");
 		
-		// stampo tutti i valori [MIN MAX AVG SD] in questo ordine, per ogni variabile richiesta [ SENT MSM, RECEIVED MSG, SIGNATIRE .. ]
-
+		// for each variable [ SENT MSG, RECEIVED MSG, SIGNATURE VERIFIED .. ] prints all values [MIN, MAX, AVG, SD]
 			for(int x=0; x<info.size(); x++){
 				for( int y=0; y< info.get(x).length; y++)
 					output=( output + ( (info.get(x))[y] ).toString() + " " ) ;
@@ -36,5 +35,4 @@ public class Stat implements Serializable {
 			return output;
 	}
 	
-
 }

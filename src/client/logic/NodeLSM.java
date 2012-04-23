@@ -12,17 +12,12 @@ public class NodeLSM extends Node {
 	}
 
 	
-	
 	public void receiveMessageClaim( MessageClaim msg ) throws ExcEndEnergy, ExcFindClone, SecurityException {
-		// con probabilità 1-p non gestisco il messaggio e termino, mentre con prob p lo accetto
-		// e eseguo il routing g volte ( locationDestination )
+		// with probability 1-p node does not manage the message and terms,
+		// while with probability p it accepts message and it run the routing g times
+		if( (float)Math.random() <= (1-probAcceptLocation) )  return; // message not accepted
 		
-		if( (float)Math.random() <= (1-probAcceptLocation) )  return; // ignora il messaggio
-		
-		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
-		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-		
 		checkEnergy(energyToReceive);
 		
 		receivedMessages++;
@@ -36,22 +31,18 @@ public class NodeLSM extends Node {
 			// buffer neighbors isn't empty
 			receiver = (NodeLSM)nearestNeighbor(pos);
 			
-			// se il + vicino alla destinazione del messagControll creato è il nodo stesso, faccio la detection
+			// if node nearest to the destination of messagControl created is the node itself, it makes the detection
 			if( receiver == this){
 				if( findClone(mc) ){ 
-					//if( isInterrupted() ) throw new SecurityException();
 					checkEndSimulazion();
-					//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 					Node.detection=1; throw new ExcFindClone();
 				} 
 				Node.detection=1;
 				memoryMsg.add(mc);
 			}
 			else{
-				// invio il messaggio di controllo al neighbor + vicino alla destinazione p del messaggio,
-				//if( isInterrupted() ) throw new SecurityException();
+				// sending the control message to the nearest neighbor to the destination pos of the message
 				checkEndSimulazion();
-				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 				checkEnergy(energyToSend);
 				sentMessages++;
 				sendMessageControl( receiver, mc );
@@ -61,37 +52,28 @@ public class NodeLSM extends Node {
 	
 	
 	public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy, ExcFindClone, SecurityException{
-		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
-		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		checkEnergy(energyToReceive);
 		
 		receivedMessages++;
 				
-		// faccio la detection del clone
+		// detection of clone
 		if( findClone(msg) ){
-			//if( isInterrupted() ) throw new SecurityException();
 			checkEndSimulazion();
-			//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 			Node.detection=1; throw new ExcFindClone();
 		}
 		Node.detection=1;
 		
 		memoryMsg.add(msg);
 		
-		
 		Node n= nearestNeighbor( msg.getPosReceiver());
-		// se il destinatario del messaggio è il nodo stesso non faccio nulla
+		// if the receiver of the message is the node itself does not do anything
 		if( this == n ) return;
 		
-		//if( isInterrupted() ) throw new SecurityException();
 		checkEndSimulazion();
-		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 		checkEnergy(energyToSend);
 		sentMessages++;
 		sendMessageControl( n, msg);
 	}
-	
-
-	
+		
 }

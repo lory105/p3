@@ -14,7 +14,7 @@ public class ActivatorNodes extends Thread{
 
 	static ActivatorNodes getInstance(){
 		if( instance== null )
-			return new ActivatorNodes();
+			instance= new ActivatorNodes();
 		return instance;
 	}
 	

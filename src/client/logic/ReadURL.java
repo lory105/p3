@@ -1,19 +1,22 @@
 package client.logic;
 
-
-
 import java.net.*;
 import java.io.*;
-//import java.util.*;
 
 import client.exception.ExcReadFile;
 
 
-
 public class ReadURL {
+	static ReadURL instance=null;
 	Connector connect=null;
 
-	public ReadURL( Connector c){ connect=c; } // da togliere public!!!!!!!!!!!!!
+	private ReadURL( Connector c){ connect=c; }
+	
+	public static ReadURL getInstance( Connector c){
+		if( instance == null )
+			instance=new ReadURL(c);
+		return instance;
+	}
 
     public Object[] read( String url ){
     
@@ -21,12 +24,11 @@ public class ReadURL {
        String[] variable = { "PROTO", "NSIM", "n", "r", "p", "g", "E", "esend", "ereceive", "esignature" };
        Object[] values = new Object[10];
        int read=0;
-       //boolean endRead= false;
 
        try{
 	      URL fileRead = new URL( url );
 
-   	      // salvo il file nel buffer di lettura
+   	      // save file in read buffer
 	      BufferedReader in = new BufferedReader( new InputStreamReader( fileRead.openStream()) );
 
 	      String inputLine;
@@ -36,15 +38,14 @@ public class ReadURL {
 	         find=false;
 	         inputLine = in.readLine();
 	    
-	      // solleva eccezione xk il file è terminato prima k abbia letto tutti i valori!! null è solo se finisce il file e non se ho riga vuota!!
+	         // raises the exception because the file has finished before it has read all the values
 	         if ( inputLine == null ){ throw new ExcReadFile(); }
 
 	         if( ! inputLine.startsWith("%")  && ! inputLine.isEmpty() ){
 	       
 	            inputLine= inputLine.replace( " ", "");
-	            inputLine= inputLine.replace( "\t", ""); // tolgo i tab
+	            inputLine= inputLine.replace( "\t", ""); // deletes tab
 	            inputLine= inputLine.replace( "E_", "e");
-  	            //System.out.println( inputLine );
 
 	            for( int x=0; x<10 && !find ; x++){
 		           if( inputLine.startsWith( variable[x] ) ){
@@ -64,18 +65,17 @@ public class ReadURL {
 		              read++;
 		           }
 	            }
-
-	            //if( !find) { return; } // solleva eccezione xk il file ha un commento che non inizia con %
+	            // raises the exception because the file has a comment that does not begin with%
+	            if( !find) { throw new ExcReadFile(); }
 	         }
 	      }
 	      
 	 	 in.close();
 	 	 
        } // fine try
-       catch ( ExcReadFile errR){ connect.print("File in lettura non corretto", 0); return null; }
-       catch ( MalformedURLException UrlErr ){ connect.print("Struttura URL non corretta.", 0); return null; }
-       catch ( IOException IOErr ){ connect.print("Errore Input Output:\nassicurarsi di essere connessi alla rete o controllare l'URL inserita.", 0); return null; }
-	 
+       catch ( ExcReadFile e){ connect.print( "Configuration file not correct.\nEND", 0); return null; }
+       catch ( MalformedURLException e ){ connect.print( e.getMessage() + "\nUrl of configuration file isn't correct.\nEND", 0); return null; }
+       catch ( IOException e ){ connect.print( e.getMessage() + "\nMake sure you are connected to the network or check the URL you entered.", 0); return null; }
       return values;
    }
    

@@ -1,14 +1,10 @@
-package server;
 // implementation of remote object that receives and prints statistics
-
-//import Stat;
+package server;
 
 import java.rmi.*;
 import java.rmi.server.*;
 import java.util.*;
 import java.io.*;
-
-
 
 
 public class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStatInterface{
@@ -18,18 +14,19 @@ public class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStat
 	
 	// function that prints the statistics provided by the client
 	public void printStats( Object[] v, Vector<client.logic.Stat> s ) throws RemoteException{
+		try{
+		out=new FileWriter(new File("output.txt"),true);
 		
-//		synchronized( out ){
-			System.out.println("Server Rmi sta stampando su file");
-			try{
-				out=new FileWriter(new File("output.txt"),true);
-				
+		synchronized( out ){
+			System.out.println("Print statistic in file output.txt");
+
+								
 				// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 				out.append( "Simulation:\n");
 				
 				for( int x=0; x<s.size(); x++){
 					
-					// stampo i 10 valori riguardanti la simulazione
+					// prints the value of simulation
 					for(int y=0; y<v.length; y++){
 						out.append( v[y].toString() + " ");
 					}
@@ -43,14 +40,14 @@ public class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStat
 				}
 				
 			}
-			catch(FileNotFoundException e){ System.out.println("file not found"); }
-			catch(IOException ioe){	System.out.println("I/O errore"); }
-			finally{
-				try{ out.close(); }
-				catch(Exception e){ System.out.println("errore on close()"); }
-			}
-		
-//		}
+
+		} // try
+		catch(FileNotFoundException e){ System.out.println( e.getMessage() + "\nFile not found"); }
+		catch(IOException e){	System.out.println( e.getMessage() + "\nI/O error"); }
+		finally{
+			try{ out.close(); }
+			catch(Exception e){ System.out.println(e.getMessage() + "\nError on close()"); }
+		}
 		
 	}
 	

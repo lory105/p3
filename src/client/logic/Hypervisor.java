@@ -4,6 +4,7 @@ import java.util.*;
 
 
 public class Hypervisor extends Thread {
+	private static Hypervisor instance;
 	private Connector connect;
 	
 	// values of simulation
@@ -34,7 +35,14 @@ public class Hypervisor extends Thread {
 	
 	
 	
-	public Hypervisor( Connector c){ connect=c; }
+	private Hypervisor( Connector c){ connect=c; }
+	
+	public static Hypervisor getInstance( Connector c){
+		if( instance == null){
+			instance=new Hypervisor(c);
+		}
+		return instance;
+	}
 	
 	public void run(){
 		try{
@@ -85,6 +93,7 @@ public class Hypervisor extends Thread {
 				}
 			}
 
+			// da togliere un po' di print !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			connect.print( ( new Integer( listNode.size() ) ).toString(), 0 );
 			connect.print("invio dati all'elaboratore", 0);
 			connect.pullData( new Data( listNode, Node.getDetection() ) );
@@ -92,7 +101,7 @@ public class Hypervisor extends Thread {
 			connect.print( "endSimulation=" + endSimulation, 0 );
 			connect.print( "findClone=" + findClone, 0 );
 			connect.print( "nodeActive=" + nodeActive, 0 );
-			connect.print( "Terminata simulazione n." + nSimCont, 0 );
+			connect.print( "Ended simulation n." + nSimCont, 0 );
 			nSimCont++;
 		}
 		
@@ -102,7 +111,7 @@ public class Hypervisor extends Thread {
 		activatorNodes.interrupt();
 		
 		}
-   	 	// if the simulation is interupted ( for example because STOP button was pressed )
+   	 	// if the simulation is interrupted ( for example because STOP button was pressed )
 		// during a wait o sleep state of Hypervisor ( so a simulation is active )
 		catch( InterruptedException e){
 			connect.print( getName() + "Hyper terminated with InterruptedExc", 0);
@@ -116,8 +125,8 @@ public class Hypervisor extends Thread {
 			}
 		}
 		
-   	 	// if simulation is interupted ( for example because STOP button was pressed ) 
-		// during an active state of Hypervisior
+   	 	// if simulation is interrupted ( for example because STOP button was pressed ) 
+		// during an active state of Hypervisor
 		catch( SecurityException e){
 			connect.print( getName() + "Hyper terminated with SecurityExc", 0);
 			activatorNodes.interrupt();
@@ -213,7 +222,7 @@ public class Hypervisor extends Thread {
 
 	// function is called only when nodeActive==0, it wakes Hypervisor
 	public void endSimulation(){
-		
+		Node.endSimulation=true;
 		synchronized( lockEndSimulation ){ 
 			endSimulation=true;
 			// Hypervisor awakened

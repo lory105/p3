@@ -5,6 +5,7 @@ import java.util.*;
 
 
 public class ElaboratorData extends Thread {
+	static ElaboratorData instance = null;
 	Connector connect=null;
 
 	Vector<Data> bufferData=new Vector<Data>();	// received data to be processed
@@ -12,7 +13,13 @@ public class ElaboratorData extends Thread {
 	Integer detectionGlobal=0;
 	int simulationNumber=0;
 	
-	public ElaboratorData(Connector c){ connect=c; }
+	private ElaboratorData(Connector c){ connect=c; }
+	
+	public static ElaboratorData getInstance( Connector c){
+		if( instance==null)
+			instance=new ElaboratorData(c);
+		return instance;
+	} 
 	
 	public void run(){
 		try{
