@@ -2,19 +2,17 @@ package client.logic;
 
 import java.util.*; 
 
-//import manager.*;
-
 
 public class Hypervisor extends Thread {
-	Connector connect;
+	private Connector connect;
 	
-	// array contentente i valori della simulazione
-	Object[] values=null;
+	// values of simulation
+	private Object[] values=null;
 	
 	private String proto;
 	private int nSim=0;
 	
-	private int numberNode=0;              // = n clone escluso!
+	private int numberNode=0;              // = n clone excluding!
 	private float radius;  			       // = r
 	private float probAcceptLocation;      // = p
 	private int numLocationDestination;    // = g value
@@ -25,30 +23,33 @@ public class Hypervisor extends Thread {
 	private int energyToSignature;
 	
 	
-	Vector<Node> listNode = null;				 // vettore contenente gli n + 1 nodi, clone incluso!
-	Integer nodeActive = (numberNode+1);         // if ==0 => tutti i nodi hanno terminato => endSimulation = true
+	private Vector<Node> listNode = null;				 // vector containing the n + 1 nodes, including clone!
+	private Integer nodeActive = (numberNode+1);         // if ==0 => all nodes have finished => endSimulation = true
 	
 
+	private ActivatorNodes activatorNodes=null;
 	private Object lockEndSimulation= new Object();
-	private boolean endSimulation=false;			// if true => una nSimCont è terminata
-	private boolean findClone=false;				// if true => una nSinCont ha trovato un clone
+	private boolean endSimulation=false;			// if true => one nSimCont is finished
+	private boolean findClone=false;				// if true => one nSinCont has find clone ha trovato un clone
 	
 	
 	
-	public Hypervisor( Connector c){ connect=c; } // devo togliere il public!!!!!!!!!!!!!!!!!!!!
+	public Hypervisor( Connector c){ connect=c; }
 	
 	public void run(){
 		try{
 			
 		Node.setParamiters( this, probAcceptLocation, numLocationDestination, energyTot, energyToSend, energyToReceive, energyToSignature );
 		int nSimCont=1;
+
+	    activatorNodes= ActivatorNodes.getInstance();
+		activatorNodes.start();
 		
-		connect.print(proto + " in hyper", 0);
+		connect.print( proto + " simulation start..", 0);
 
 		while( nSimCont <= nSim ){
-			// serve per gestire il pulsante di STOP
 			if( isInterrupted() ) throw new SecurityException();
-			connect.print( "\nInizio simulazione n." + nSimCont, 0 );
+			connect.print( "\nstart simulation n." + nSimCont, 0 );
 			
 			nodeActive=(numberNode+1);
 			findClone=false;
@@ -61,18 +62,15 @@ public class Hypervisor extends Thread {
 		
 			connect.print( "nodeActive: " + nodeActive, 0);
 
-			// serve per gestire il pulsante di STOP
 			if( isInterrupted() ){ throw new SecurityException(); }
-			
-			// creo e attivo il thread ActivateNode per attivare tutti i nodi
-			ActivateNode an= new ActivateNode( listNode );
-			an.start();
-			
+						
+			activatorNodes.pullVectorNodesToActive( listNode );
 	
 			synchronized (lockEndSimulation) {
-				while( !endSimulation && nodeActive!=0 ){// attendo che la simulazione termini
+				while( !endSimulation && nodeActive!=0 ){
 					lockEndSimulation.wait();
 				}
+				connect.print("Hypervisor awakened..", 0);
 			}
 			
 			
@@ -89,10 +87,8 @@ public class Hypervisor extends Thread {
 
 			connect.print( ( new Integer( listNode.size() ) ).toString(), 0 );
 			connect.print("invio dati all'elaboratore", 0);
-			// invoco il lettore dei valori dei nodi!!
 			connect.pullData( new Data( listNode, Node.getDetection() ) );
 				
-			
 			connect.print( "endSimulation=" + endSimulation, 0 );
 			connect.print( "findClone=" + findClone, 0 );
 			connect.print( "nodeActive=" + nodeActive, 0 );
@@ -100,16 +96,18 @@ public class Hypervisor extends Thread {
 			nSimCont++;
 		}
 		
-		// passo una simulazione vuota che fungerà da flag per indicare che le simulazioni sono terminate
-		connect.print("invio dati sim vuota come flag all'elaboratore", 0);
+		// send a null simulation that acts as a flag that the simulations were completed
+		connect.print("simulation ended..", 0);
 		connect.pullData( new Data(null, -1) );
+		activatorNodes.interrupt();
 		
 		}
-   	 	// se il thread viene interrotto (x esempio è stato premuto STOP ) durante una wait o sleep ( quindi una simulazione è in atto )
-		// quindi i nodi sono ancora attivi e la nSimCont è ancora in atto
+   	 	// if the simulation is interupted ( for example because STOP button was pressed )
+		// during a wait o sleep state of Hypervisor ( so a simulation is active )
 		catch( InterruptedException e){
 			connect.print( getName() + "Hyper terminated with InterruptedExc", 0);
-			if( listNode !=null ){  // se arrivo qui è sempre true!
+			activatorNodes.interrupt();
+			if( listNode !=null ){
 				Node.endSimulation=true;
 				for( int x=0; x<listNode.size(); x++ )
 					listNode.get(x).interrupt();
@@ -118,10 +116,11 @@ public class Hypervisor extends Thread {
 			}
 		}
 		
-   	 	// se la simulazione termina (x esempio è stato premuto STOP) durante uno stato attivo del Hypervisor in cui faccio il controllo: if( isInterrupted() )
-		// il controllo viene fatto solo in situazioni in cui i nodi non sono ancora attivati!!
+   	 	// if simulation is interupted ( for example because STOP button was pressed ) 
+		// during an active state of Hypervisior
 		catch( SecurityException e){
 			connect.print( getName() + "Hyper terminated with SecurityExc", 0);
+			activatorNodes.interrupt();
 			if( listNode !=null )
 				listNode.clear();
 		}
@@ -130,134 +129,111 @@ public class Hypervisor extends Thread {
 	
 	
 	private void generateNode(int nodiTot){
-		Position p=null;
+		Position pos=null;
 		boolean alreadyExistingPosition= false;
 		int rand = (int)(Math.random() *10) ; // random value for RED Node [ 0<= rand <10 ]
 		
-		// creo tutti i nodi clone incluso ( nodiTot )
+		// creates all nodes including clone ( nodiTot )
 		for(int nodeCreated=0; nodeCreated<nodiTot ; nodeCreated++){
 			
 			alreadyExistingPosition= false;  
-			// creo la posizione del nuovo nodo da creare: Math.random() ritorna un double compreso tra 0 e 1
-			p= new Position( (float)Math.random(), (float)Math.random() );
+			// create the position of the new node to create: Math.random() return a double [ 0<= double <1 ]
+			pos= new Position( (float)Math.random(), (float)Math.random() );
 			for(int k=0; k<nodeCreated && ! alreadyExistingPosition; k++){
-				// verifico tra i nodi già creati se la posizione è già esistente
-				// se la posizione esiste già decremento il contatore nodeCreated ed esco dal for interno
-				if( listNode.get(k).getPosition().equals(p)){ 
+				// check between nodes created, if the new position already exists
+				if( listNode.get(k).getPosition().equals(pos)){ 
 					alreadyExistingPosition=true; nodeCreated--; break; 
 				} 
 			}
 
 			
-			// se ho creato tutti i nodi effettivi, creo il nodo clone se la sua posizione scelta non è già in uso
-			// quindi scelgo un nodo da clonare ed estraggo il suo id
+			// if all node are created, create clone node checking if its chosen position is already used
+			// choose a node to cloned and take its id
 			if(nodeCreated == nodiTot-1 && ! alreadyExistingPosition ){
 				int cloneRandomId = ( listNode.get( (int) ( Math.random()* (listNode.size()-1) ) ) ).getIdNode();
 				connect.print( "Nodi creati" + listNode.size() + " Id nodo clonato: " + cloneRandomId, 0);
 				
 				if( proto.equals("LSM") ){
-					connect.print( "creato nodo clone LSM", 0);
-					listNode.add( new NodeLSM( cloneRandomId, p, energyTot ) );
+					listNode.add( new NodeLSM( cloneRandomId, pos, energyTot ) );
 				}
 				else{
-					connect.print( "creato nodo clone RED", 0);
-					listNode.add( new NodeRED( cloneRandomId, p, energyTot, rand ) );
+					listNode.add( new NodeRED( cloneRandomId, pos, energyTot, rand ) );
 				}
+				connect.print( "created clone node", 0);
 									
 				break;
 			}
 			
-			// creo il nodo con id il numero di nodi fino ad ora creati, e con la posizione p creata
+			// create new node with id the number of nodes created up to now, and with position pos created
 			if( ! alreadyExistingPosition )
 				if( proto.equals("LSM") ){
-					//connect.print( "creato nodo con id " + nodeCreated );
-					listNode.add( new NodeLSM( nodeCreated, p, energyTot ) );
+					listNode.add( new NodeLSM( nodeCreated, pos, energyTot ) );
 				}
 				else{
-					//connect.print( "creato nodo con id " + nodeCreated );
-					listNode.add( new NodeRED( nodeCreated, p, energyTot, rand  ) );
+					listNode.add( new NodeRED( nodeCreated, pos, energyTot, rand  ) );
 				}
 		}
 	}
 	
 	
+	// function used to find neighbors for each node
 	public void findNeighbors(){
-		Node n=null, nNeighbor;
-		Position p=null, pNeighbor=null;
+		Node node=null, nNeighbor;
+		Position pos=null, posNeighbor=null;
 		Vector<Node> neighbors = null;
 		
 		for(int i=0; i< listNode.size(); i++ ){
-			// salvo in n il nodo al quale devo calcolare i suoi neighbors
-			n = listNode.get(i);
-			neighbors= n.getNeighbors();
-			p = n.getPosition();
+			// searching neighbors of Node node
+			node = listNode.get(i);
+			neighbors= node.getNeighbors();
+			pos = node.getPosition();
 			
-			// calcolo i vicini di n, scorrendo il vettore dei nodi e calcolando le loro distanze
 			for(int k=0; k< listNode.size(); k++ ){
 				nNeighbor = listNode.get(k);
+				 
+				if( node != nNeighbor ){
+					posNeighbor = nNeighbor.getPosition();
 				
-				// controllo che il nodo n al quale sto calcolando i suoi vicini sia diverso da sè stesso in nNeighbor 
-				if( n != nNeighbor ){
-					pNeighbor = nNeighbor.getPosition();
-				
-					// se il raggio prefissato è >= della distanza tra i due nodi => lo aggiungo nNeighbor ai neighbors di n
-					if( radius >= pythagora( p, pNeighbor ) ) neighbors.add( nNeighbor );
+					// if radius is >= distance between the two nodes => add nNeighbor to the list of neighbors
+					if( radius >= pythagora( pos, posNeighbor ) ) neighbors.add( nNeighbor );
 				}
 			}
-			// stampo quanti vicini ha il nodo n
-			//connect.print( "n: " + n + " - neighbors del nodo " + n.getIdNode() + ": "+ neighbors.size() );
 		}
 		
 	}
 
-	// se un nodo ha trovato un clone, interrompe tutti i nodi e quando nodeActive==0 => l'Hypervisor si risveglierà
+	// if a node found a clone, it stops all nodes and when nodeActive == 0 => the Hypervisor will awaken
 	public synchronized void findClone(){
 		Node.endSimulation=true;
-		connect.print( "trovato clone", 0);
-		
-		
+		connect.print( "find clone!", 0);
 
-/*		
-		synchronized(lockEndSimulation){ 
-			endSimulation= true;
-			findClone=true;
-			//lockEndSimulation.notify();
-			
-		}
-*/
 		findClone=true;
-		endSimulation();
+		//endSimulation();
 	}
 
-	// viene invocata solo quando nodeActive==0, setta endSimulation dell'Hypervisor a true e lo risveglia
+	// function is called only when nodeActive==0, it wakes Hypervisor
 	public void endSimulation(){
 		
 		synchronized( lockEndSimulation ){ 
 			endSimulation=true;
-			// sveglio l'Hypervisor
+			// Hypervisor awakened
 			lockEndSimulation.notify();
-			connect.print("END SIM SVEGLIATO HYPER", 0);
 		}
 		
 	}
 	
+	
 	public synchronized void nodeActive(){
-		// quando un nodo si risveglia incrementa il contatore nodeActive dei nodi attivi in un determinato istante
-		//synchronized (nodeActive) {
-			//nodeActive++;
-			//connect.print( "nodeActive++: " + nodeActive );
+		synchronized (nodeActive) {
 			System.out.println( "nodeActive++: " + ++nodeActive);
-		//}
+		}
 	}
 
 	public synchronized void nodeNotActive(){
-		// un nodo decrementa il contatore dei nodi attivi quando: va in wait, ha terminato l'energia o quando non ha più vicini
-		//synchronized (nodeActive) {
-			//nodeActive--;
-			//connect.print( "nodeActive--: " + nodeActive );
+		synchronized (nodeActive) {
 			System.out.println( "nodeActive--: " + --nodeActive);
 			if( nodeActive == 0 ) { Node.endSimulation=true; endSimulation(); }
-		//}
+		}
 	}
 
 	public boolean readEndSimulation(){
@@ -287,7 +263,7 @@ public class Hypervisor extends Thread {
 	public final Object[] getParameters(){ return values; }
 	
 	
-
+	// function to calculate the distance between two nodes
 	public static float pythagora( Position p1, Position p2 ){
 		float a = p1.getX() - p2.getX();
 		float b = p1.getY() - p2.getY();
@@ -307,4 +283,7 @@ public class Hypervisor extends Thread {
 	}
 	
 
+	public void print(String text, int area){
+		connect.print(text, area);
+	}
 }

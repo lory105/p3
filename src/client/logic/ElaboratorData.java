@@ -3,24 +3,21 @@ package client.logic;
 
 import java.util.*;
 
-// classe che riceve i vettori (vc) dei nodi di ogni simulazione alla loro terminazione,
-// li salva in un bufferData, e per ogni simulazione ne elabora i dati leggendoli nei nodi 
 
 public class ElaboratorData extends Thread {
 	Connector connect=null;
 
-	Vector<Data> bufferData=new Vector<Data>(); // dati ricevuti da elaborare
-	Vector<Stat> stats= new Vector<Stat>();   // statistiche pronte per essere inviate
+	Vector<Data> bufferData=new Vector<Data>();	// received data to be processed
+	Vector<Stat> stats= new Vector<Stat>();   	// statistics ready to be sent
 	Integer detectionGlobal=0;
 	int simulationNumber=0;
 	
 	public ElaboratorData(Connector c){ connect=c; }
 	
 	public void run(){
-		System.out.println("elaboratorData parte run");
 		try{
 			Data data;
-			Vector<Node> vn=null;
+			Vector<Node> vectorNodeToAnalize=null;
 			int detection;
 			
 			while(true){
@@ -29,32 +26,30 @@ public class ElaboratorData extends Thread {
 				synchronized (bufferData){
 					
 					while( bufferData.isEmpty() ){ bufferData.wait(); }
-					//if( finish ) throw new ExcFinish();
 					data= bufferData.remove(0);
-					vn = data.getListNode();
+					vectorNodeToAnalize = data.getListNode();
 					detection = data.getDetection();
 					if( detection ==1 ) detectionGlobal=new Integer( detection );
 				}
 			
-				if( detection == -1 ){ // flag di fine simulazione, il client può inviare le statistiche della simulazione
-					System.out.println("elaborator passa stats al client");
+				if( detection == -1 ){ // flag of end simulation, statistics can be sent to server
+					connect.print("simulation end, statistics ready to be sent to server..", 0);
 					connect.pushStats( stats );
 					simulationNumber=0;
-					throw new SecurityException();  // sollevo eccezione di interruzione così libero memoria
+					throw new SecurityException();
 				}
 				if( isInterrupted() ) throw new SecurityException();
-				else readDate( vn );
+				else readDate( vectorNodeToAnalize );
 				
 			}
 		}
 		
 		catch( InterruptedException e){ bufferData.clear(); stats.clear(); }
-		// se il thread è in wait e viene interrotto posso librare tutta la menoria
 		catch( SecurityException e ){ bufferData.clear(); stats.clear(); }
 		
 	}
 	
-	// leggo dalla lista dei nodi di una simulazione i valori contenuti nei nodi
+	// read from a list of nodes of a single simulation the values ​​contained in the nodes
 	private void readDate( Vector<Node> vc){
 		Integer sentMessagesTot=0,      sentMessagesMin=Integer.MAX_VALUE,      sentMessagesMax=0;      Float sentMessagesAvg=0F,		sentMessagesSD=0F;
 		Integer receivedMessagesTot=0,  receivedMessagesMin=Integer.MAX_VALUE,  receivedMessagesMax=0;  Float receivedMessagesAvg=0F,	receivedMessagesSD=0F;
@@ -62,7 +57,7 @@ public class ElaboratorData extends Thread {
 		Integer energyUsedTot=0,        energyUsedMin=Integer.MAX_VALUE,        energyUsedMax=0;        Float energyUsedAvg=0F,			energyUsedSD=0F;
 		Integer memoryMsgTot=0,         memoryMsgMin=Integer.MAX_VALUE,         memoryMsgMax=0;         Float memoryMsgAvg=0F,			memoryMsgSD=0F;
 		
-
+		// calculating max and min values
 		for( int x=0; x< vc.size(); x++){
 			int[]datas = (vc.get(x).getDatas() );
 			
@@ -108,7 +103,7 @@ public class ElaboratorData extends Thread {
 		
 		}
 		
-		
+
 		sentMessagesSD= roundValues( (float)Math.sqrt( sentMessagesSD/(float)vc.size() ) );
 		receivedMessagesSD= roundValues( (float)Math.sqrt( receivedMessagesSD/(float)vc.size() ) );
 		signatureVerifiedSD= roundValues( (float)Math.sqrt( signatureVerifiedSD/(float)vc.size() ) );
@@ -116,7 +111,7 @@ public class ElaboratorData extends Thread {
 		memoryMsgSD= roundValues( (float)Math.sqrt( memoryMsgSD/(float)vc.size() ) );
 
 		
- 
+		// storage statistics
 		Object[] sentMessages= { sentMessagesMin, sentMessagesMax, sentMessagesAvg, sentMessagesSD };
 		Object[] receivedMessages= { receivedMessagesMin, receivedMessagesMax, receivedMessagesAvg, receivedMessagesSD };
 		Object[] signatureVerified= { signatureVerifiedMin, signatureVerifiedMax, signatureVerifiedAvg, signatureVerifiedSD };
@@ -124,7 +119,6 @@ public class ElaboratorData extends Thread {
 		Object[] memoryMsg= { memoryMsgMin, memoryMsgMax, memoryMsgAvg, memoryMsgSD };
 		
 		
-		System.out.println("Elaborator elabora dati");
 		Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal );
 		stats.add( stat );
 		
@@ -132,14 +126,10 @@ public class ElaboratorData extends Thread {
 		connect.print( "\n" + simulationNumber + ") " + stat.printValues(), 1);
 	}
 	
-	
+	// received data to be processed
 	public void push( Data d ){
-		synchronized (bufferData) {
-			System.out.println("Elaborator sta x ricevere dati. Size bufferDataData elaborator=" + bufferData.size());
+		synchronized (bufferData) {		
 			bufferData.add( d );
-			
-			System.out.println("Elaborator ha ricevuto dati. Size bufferDataData elaborator=" + bufferData.size());
-			if( d == null ) System.out.println("si");
 			bufferData.notify();
 		}
 	}

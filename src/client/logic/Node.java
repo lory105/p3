@@ -111,7 +111,7 @@ abstract public class Node extends Thread {
 		}
 		// se il nodo è interrotto in uno stato attivo
 		catch( SecurityException e){
-   	 		hyper.connect.print( getName() + "securExc terminato " + this.getName(), 0 );
+   	 		hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
 
    	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
    	 		hyper.nodeNotActive();
@@ -119,19 +119,20 @@ abstract public class Node extends Thread {
 
 		// se il nodo è interrotto in uno stato di wait
 		catch( InterruptedException e){
-   	 		hyper.connect.print( getName() + "interrExc terminato " + this.getName(), 0 );
+   	 		hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
    	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
    	 		//hyper.nodeNotActive();
    	 	}
 
-		catch( ExcNoNeighbors e){ hyper.connect.print("NO VICINI", 0); hyper.nodeNotActive(); }
+		catch( ExcNoNeighbors e){ hyper.nodeNotActive(); }
 
 		catch( ExcFindClone e ){ 
-			hyper.connect.print("CLONE EXIT FIND", 0);  hyper.findClone(); hyper.nodeNotActive();}
+			hyper.print("CLONE EXIT FIND", 0);
+			hyper.findClone(); hyper.nodeNotActive();}
 
 		catch( ExcEndEnergy e){
 			// mando un mess a tutti i vicini che sono morto e avviso l'hypervisior
-			hyper.connect.print( getName()+ " ExcEndEnergy, inviati" + sentMessages + "x" + neighbors.size() + "vicini --" , 0);
+			hyper.print( getName()+ " ExcEndEnergy, inviati" + sentMessages + "x" + neighbors.size() + "vicini --" , 0);
 			sendMessageDeath();
 			hyper.nodeNotActive();
 		}
@@ -219,7 +220,8 @@ abstract public class Node extends Thread {
 		Position posSender = msg.getPosSender();
 		
 		// detection about me
-		if(idSender == id && ! posSender.equals(pos) ) { hyper.connect.print("TROVATO!!!!!!!!!!!\n", 0); return true;} 
+		if(idSender == id && ! posSender.equals(pos) )
+			return true;
 		
 		// detection about of my messages stored in buffer memoryMsg
 		synchronized (memoryMsg) {
@@ -227,9 +229,8 @@ abstract public class Node extends Thread {
 				//if( isInterrupted() ) throw new SecurityException();
 				checkEndSimulazion();
 				//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
-				if( idSender == memoryMsg.get(i).getIdSender() &&  posSender != memoryMsg.get(i).getPosSender() ){
-					hyper.connect.print("TROVATO!!!!!!!!!!!\n", 0); return true;
-				}
+				if( idSender == memoryMsg.get(i).getIdSender() &&  posSender != memoryMsg.get(i).getPosSender() )
+					return true;
 			}
 		}
 		return false;

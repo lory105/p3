@@ -4,8 +4,6 @@ import client.exception.ExcEndEnergy;
 import client.exception.ExcFindClone;
 
 
-//import java.util.Vector;
-
 public class NodeLSM extends Node {
 	
 	
