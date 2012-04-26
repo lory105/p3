@@ -7,7 +7,7 @@ import java.util.*;
 import java.io.*;
 
 
-public class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStatInterface{
+class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStatInterface{
 	private FileWriter out;
 	
 	public ReceiverStatImp() throws RemoteException{}

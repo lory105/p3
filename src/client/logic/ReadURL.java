@@ -1,3 +1,4 @@
+// Class used to read configuration file
 package client.logic;
 
 import java.net.*;
@@ -6,7 +7,7 @@ import java.io.*;
 import client.exception.ExcReadFile;
 
 
-public class ReadURL {
+class ReadURL {
 	static ReadURL instance=null;
 	Connector connect=null;
 
@@ -18,6 +19,7 @@ public class ReadURL {
 		return instance;
 	}
 
+	// function to read file
     public Object[] read( String url ){
     
     

@@ -1,7 +1,7 @@
 package client.logic;
 
 
-public class MessageControl implements MessageDetection{
+class MessageControl implements MessageSensorNetworks{
 
 	private int idSender;
 	private Position posSender=null;
@@ -19,8 +19,12 @@ public class MessageControl implements MessageDetection{
 		posReceiver = p;
 	}
 	
-	
+	// function to return identifier number of sender node
 	public int getIdSender(){ return idSender; }
+	
+	// function to return position (x,y) of sender node
 	public Position getPosSender(){ return posSender; }
+	
+	// function to return position (x,y) of receiver node
 	public Position getPosReceiver(){ return posReceiver; }
 }

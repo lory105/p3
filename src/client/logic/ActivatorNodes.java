@@ -4,7 +4,7 @@ package client.logic;
 import java.util.*; 
 
 
-public class ActivatorNodes extends Thread{
+class ActivatorNodes extends Thread{
 	
 	static ActivatorNodes instance=null;
 	
@@ -39,8 +39,8 @@ public class ActivatorNodes extends Thread{
 	}
 
 	
-	
-	public void pullVectorNodesToActive( Vector<Node> vn ){
+	// function to put a vector of nodes to active in ActivatorNode buffer
+	public void pushVectorNodesToActive( Vector<Node> vn ){
 		synchronized(bufferListNode){
 			bufferListNode.add( vn );
 			bufferListNode.notify();

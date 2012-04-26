@@ -4,7 +4,7 @@ package client.logic;
 import java.util.Vector;
 
 
-public class Data {
+class Data {
 	private Vector<Node> listNode=null;
 	private int detection;
 	
@@ -13,7 +13,10 @@ public class Data {
 		detection=d;
 	}
 	
+	// function to return listNode
 	public Vector<Node> getListNode(){ return listNode; }
+	
+	// function to return detection parameter (it indicates if in the simulation, at least a node does the detection )
 	public int getDetection(){ return detection; }
 		
 	

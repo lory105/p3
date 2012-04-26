@@ -1,9 +1,10 @@
+// main class that manage simulation
 package client.logic;
 
 import java.util.*; 
 
 
-public class Hypervisor extends Thread {
+class Hypervisor extends Thread {
 	private static Hypervisor instance;
 	private Connector connect;
 	
@@ -37,7 +38,7 @@ public class Hypervisor extends Thread {
 	
 	private Hypervisor( Connector c){ connect=c; }
 	
-	public static Hypervisor getInstance( Connector c){
+	static Hypervisor getInstance( Connector c){
 		if( instance == null){
 			instance=new Hypervisor(c);
 		}
@@ -72,7 +73,7 @@ public class Hypervisor extends Thread {
 
 			if( isInterrupted() ){ throw new SecurityException(); }
 						
-			activatorNodes.pullVectorNodesToActive( listNode );
+			activatorNodes.pushVectorNodesToActive( listNode );
 	
 			synchronized (lockEndSimulation) {
 				while( !endSimulation && nodeActive!=0 ){
@@ -136,7 +137,7 @@ public class Hypervisor extends Thread {
 
 	}
 	
-	
+	// function to generate nodes of a simulation
 	private void generateNode(int nodiTot){
 		Position pos=null;
 		boolean alreadyExistingPosition= false;
@@ -217,7 +218,6 @@ public class Hypervisor extends Thread {
 		connect.print( "find clone!", 0);
 
 		findClone=true;
-		//endSimulation();
 	}
 
 	// function is called only when nodeActive==0, it wakes Hypervisor
@@ -232,12 +232,14 @@ public class Hypervisor extends Thread {
 	}
 	
 	
+	// function to update the number of active nodes: if a node goes to sleep, nodeActive is decremented
 	public synchronized void nodeActive(){
 		synchronized (nodeActive) {
 			System.out.println( "nodeActive++: " + ++nodeActive);
 		}
 	}
 
+	// function to update the number of active nodes: if a node wakes up, nodeActive is incremented
 	public synchronized void nodeNotActive(){
 		synchronized (nodeActive) {
 			System.out.println( "nodeActive--: " + --nodeActive);
@@ -245,6 +247,7 @@ public class Hypervisor extends Thread {
 		}
 	}
 
+	// function to read value of fiend endSimulation
 	public boolean readEndSimulation(){
 		synchronized(lockEndSimulation){
 			if( ! endSimulation ) return true;
@@ -253,7 +256,7 @@ public class Hypervisor extends Thread {
 		}
 	}
 	
-	
+	// function to sets all simulation parameters read from configuration file
 	public void setParamiters( Object[] v){
 		values=v;
 		
@@ -291,7 +294,7 @@ public class Hypervisor extends Thread {
 		return r;
 	}
 	
-
+	// function to print some text in gui areas
 	public void print(String text, int area){
 		connect.print(text, area);
 	}

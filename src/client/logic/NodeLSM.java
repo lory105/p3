@@ -1,17 +1,18 @@
+// Class represents the nodes for LSM protocol
 package client.logic;
 
 import client.exception.ExcEndEnergy;
 import client.exception.ExcFindClone;
 
 
-public class NodeLSM extends Node {
+class NodeLSM extends Node {
 	
 	
 	public NodeLSM( int id, Position pos, int en){
 		super( id, pos, en );
 	}
 
-	
+	// function called to manage a claim message received
 	public void receiveMessageClaim( MessageClaim msg ) throws ExcEndEnergy, ExcFindClone, SecurityException {
 		// with probability 1-p node does not manage the message and terms,
 		// while with probability p it accepts message and it run the routing g times
@@ -50,7 +51,7 @@ public class NodeLSM extends Node {
 		}	
 	}
 	
-	
+	// function called to manage a control message received
 	public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy, ExcFindClone, SecurityException{
 		checkEndSimulazion();
 		checkEnergy(energyToReceive);

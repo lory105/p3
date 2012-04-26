@@ -1,7 +1,8 @@
+// Class represents the position (x,y) of nodes
 package client.logic;
 
 
-public class Position {
+class Position {
    private float x;
    private float y;
    

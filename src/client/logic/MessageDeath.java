@@ -2,12 +2,13 @@
 package client.logic;
 
 
-public class MessageDeath implements Message{
-	int idSender;
+class MessageDeath implements Message{
+	private int idSender;
 	
 	MessageDeath( int idSender){
 		this.idSender=idSender;
 	}
 	
+	// function to return identification number of sender node
 	public int getIdSender(){ return idSender; }
 }

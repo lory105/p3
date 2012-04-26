@@ -1,5 +1,5 @@
+// Class represents the statistics for server
 package server;
-
 
 import java.util.*;
 import java.io.Serializable;

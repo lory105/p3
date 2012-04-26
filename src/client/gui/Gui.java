@@ -62,6 +62,7 @@ public class Gui extends JFrame{
 		}
 	}
 	
+	// class to menage gui event
 	class GuiEvent extends AWTEvent{
 		public static final int EVENT_ID = AWTEvent.RESERVED_ID_MAX + 1;
 		private String str;
@@ -80,7 +81,6 @@ public class Gui extends JFrame{
 		connect=c;
 		
 		setSize(900, 630);
-//		setDefaultCloseOperation( JFrame.EXIT_ON_CLOSE); !!!!!!!!
 		
 		// buttons are connected to their listeners
 		start.addActionListener(new startClick());
@@ -168,9 +168,10 @@ public class Gui extends JFrame{
 			}
 	}
 	
-	
+	// function to clear both text area in GUI
 	public void clearDisplay(){
 		textAreaInformation.setText("");
+		textAreaOutput.setText("");
 	}
 	
 	// function which terminates all active threads 

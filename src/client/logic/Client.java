@@ -1,15 +1,15 @@
-package client;
+// implementation of client
+package client.logic;
 
 import java.util.*;
 import java.rmi.*;
 import java.net.*;
 
-import client.logic.Connector;
-import client.logic.Stat;
+import client.gui.Gui;
 import server.ReceiverStatInterface;
 
 
-public class Client {
+class Client {
 	private static String HOST = "localhost";
 	
 	private Connector connect=null;
@@ -17,7 +17,6 @@ public class Client {
 	
 	public Client( Connector c){
 		connect=c;
-
 	} 
 
 	// function for connection test
@@ -43,7 +42,6 @@ public class Client {
 		}
 		catch( RemoteException e ){
 			System.out.println("RemoteExc"); 
-			System.out.println( e.getMessage() );
 			connect.print( "RemoteException: some problem with server are occurred,\nperhaps the server URL isn't correct..\n" + e.getMessage(), 0 );
 			return false;
 		}
@@ -63,7 +61,20 @@ public class Client {
 		catch( RemoteException e ){ 
 			connect.print( "RemoteException: some problem with server are occurred,\nperhaps the server URL isn't correct..\n" + e.getMessage(), 0 );
 		}
-		connect.print("Statistics sent to the server\nEND", 0);
+		connect.print("Statistics sent correctly to the server\nEND", 0);
+	}
+	
+	
+	public static void main(String[] args){
+
+		Connector connect= new Connector();
+		Client client = new Client( connect );
+		ReadURL reader = ReadURL.getInstance(connect);
+		Hypervisor hyper = Hypervisor.getInstance( connect );
+		ElaboratorData elaborator = ElaboratorData.getInstance(connect);
+		Gui mf= new Gui(connect, "Simulation" );
+		
+		connect.setParameters( hyper, mf, reader, elaborator, client );
 	}
 	
 }

@@ -1,12 +1,13 @@
+// Class represents server
 package server;
 
 import java.rmi.*;
 
 
-public class ServerRMI {
+class ServerRMI {
 	private static final String HOST = "localhost";
 	
-	
+	// main function server
 	public static void main(String[] args) throws Exception{
 
 		// instance of remote object

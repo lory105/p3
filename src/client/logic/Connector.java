@@ -3,7 +3,6 @@ package client.logic;
 
 import java.util.*;
 
-import client.Client;
 import client.gui.Gui;
 
 
@@ -31,7 +30,7 @@ public class Connector {
 		hyper.start();
 	}
 	
-	
+	// function to set the pointers to the respective objects
 	public void setParameters( Hypervisor h, Gui m, ReadURL r, ElaboratorData el, Client c ){
 		hyper=h;
 		mf=m;
@@ -57,15 +56,17 @@ public class Connector {
 		client.sendStats(stats);		
 	}
 	
-	
+	// function to close all thread
 	public void closeAll(){
 		hyper.interrupt();
 		elaborator.interrupt();
 		
 	}
 	
+	// function to return the simulation parameters from hypervisor
 	public final Object[] getParameters(){ return hyper.getParameters(); }
 	
+	// function to call client method connetcToServer
 	public boolean connectToServer( String nameServer){ return client.connetcToServer(nameServer); }
 	
 }

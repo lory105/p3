@@ -1,3 +1,4 @@
+// class represents generic nodes
 package client.logic;
 
 import java.util.*;
@@ -7,7 +8,7 @@ import client.exception.ExcFindClone;
 import client.exception.ExcNoNeighbors;
 
 
-abstract public class Node extends Thread {
+abstract class Node extends Thread {
 	static Hypervisor hyper=null;
 	static int detection = 0; 	   // detection flag. if almost one node makes detection detection==1
 	static Object lockEndSim = new Object();
@@ -39,6 +40,7 @@ abstract public class Node extends Thread {
 		id=i; pos=p; energy= en;
 	}
 	
+	// function to set simulation parameters
 	public static void setParamiters( Hypervisor h, float p, int ld, int et, int ets, int etr, int etsg){
 		hyper=h;
 		probAcceptLocation=p;
@@ -115,13 +117,14 @@ abstract public class Node extends Thread {
 		
 	}
 	
-	
+	// function to check if simulation are ended
 	public void checkEndSimulazion() throws SecurityException{
 		//if( isInterrupted() ) throw new SecurityException();
 		if( endSimulation ) throw new SecurityException();
 		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 	}
 	
+	// function to check if the node has no more neighbors
 	public void checkEndNeighbors() throws ExcNoNeighbors{
 		synchronized( neighbors ){ if( neighbors.isEmpty() ) throw new ExcNoNeighbors(); }
 	} 
@@ -149,11 +152,12 @@ abstract public class Node extends Thread {
 		}
 	}
 	
-
+	// function to send message control
 	public void sendMessageControl( Node receiver, MessageControl msg){
 		receiver.pushMessage(msg);
 	}
 
+	// function to send message death ( sent when the node finishes its energy )
 	public void sendMessageDeath(){
 		MessageDeath msg = new MessageDeath( id );
 		synchronized( neighbors ){
@@ -163,9 +167,13 @@ abstract public class Node extends Thread {
 		}
 	}
 	
+	// abstract implementation of function to receive a message claim
 	abstract public void receiveMessageClaim( MessageClaim msg ) throws ExcEndEnergy, ExcFindClone, SecurityException;
+
+	// abstract implementation of function to receive a message control
 	abstract public void receiveMessageControl( MessageControl msg ) throws ExcEndEnergy, ExcFindClone, SecurityException;
 	
+	// function called when a node receives a messageDeath 
 	public void receiveMessageDeath( MessageDeath msg ){
 		int idNodeDied= msg.getIdSender();
 		synchronized( neighbors ){
@@ -178,7 +186,7 @@ abstract public class Node extends Thread {
 		}
 	}
 	
-	
+	// function for detection of clone: it searches for clone in memoryMsg
 	public boolean findClone( MessageControl msg ) throws ExcEndEnergy, SecurityException{
 		checkEndSimulazion();
 		checkEnergy(energyToSignature);
@@ -209,7 +217,7 @@ abstract public class Node extends Thread {
 	public void pushMessage( Message msg ){
 	
 		synchronized( bufferMessage ){
-		// if receided a death message from a neighbor, puts it in first position of bufferMessage
+		// if received a death message from a neighbor, puts it in first position of bufferMessage
 			if( msg instanceof MessageDeath ) bufferMessage.add(0, msg);
 			else bufferMessage.add(msg);
 			
@@ -237,14 +245,20 @@ abstract public class Node extends Thread {
 		return nearestNode;
 	}
 	
-	
+	// function to update values for a new simulation
 	static public void setNewSim( int d, boolean e){ detection = d; endSimulation=e; };
 	
+	// function to return identification number of node
 	public int getIdNode(){ return id; }
+
+	// function to return node's position
 	public final Position getPosition(){ return pos; }
+	
+	// function to return node's neighbors
 	public Vector<Node> getNeighbors(){ synchronized(neighbors){ return neighbors;}  }
 	static public int getDetection(){ return detection; }
 	
+	// function to return node's information at end of simulation to do statistics 
 	public int[] getDatas(){
 		int en;
 		if( energy <= 0 )

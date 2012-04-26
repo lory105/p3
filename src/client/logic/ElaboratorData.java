@@ -4,7 +4,7 @@ package client.logic;
 import java.util.*;
 
 
-public class ElaboratorData extends Thread {
+class ElaboratorData extends Thread {
 	static ElaboratorData instance = null;
 	Connector connect=null;
 
@@ -141,7 +141,7 @@ public class ElaboratorData extends Thread {
 		}
 	}
 	
-	
+	// function to round values to the second digit after the decimal point
 	private float roundValues( float x ){
 		return (float)( Math.round( x  *100.0 ) /100f  );
 	}

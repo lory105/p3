@@ -2,7 +2,7 @@
 package client.logic;
 
 
-public interface Message {
+interface Message {
 	
 	public int getIdSender();
 }

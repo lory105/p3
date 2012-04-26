@@ -1,3 +1,4 @@
+// Class represents the statistics for server
 package client.logic;
 
 import java.util.*;
