@@ -36,11 +36,11 @@ public class Gui extends JFrame{
 	class startClick implements ActionListener{
 		public void actionPerformed(ActionEvent e){
 		    textAreaInformation.setText(""); 
-			textAreaInformation.append("Start searching files..\n");
+			textAreaInformation.append("Start searching configuration file..\n");
 			
 			if( connect.readFile( urlToRead.getText() ) && connect.connectToServer( urlToSend.getText() ) ){
 				start.setEnabled(false);
-				textAreaInformation.append("File read correctly..\n" + "Start simulation..\n");
+				textAreaInformation.append("file read correctly..\n" );
 				connect.start();
 			}
 		}

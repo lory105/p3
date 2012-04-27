@@ -92,7 +92,7 @@ abstract class Node extends Thread {
 		}
 		// if node is interrupted during an active state
 		catch( SecurityException e){
-   	 		hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
+   	 		//hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
 
    	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
    	 		hyper.nodeNotActive();
@@ -100,12 +100,11 @@ abstract class Node extends Thread {
 
 		// if node is interrupted during an wait state 
 		catch( InterruptedException e){
-   	 		hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
+   	 		//hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
    	 	}
 
 		catch( ExcNoNeighbors e){ hyper.nodeNotActive(); }
 		catch( ExcFindClone e ){ 
-			hyper.print("CLONE EXIT FIND", 0);
 			hyper.findClone(); hyper.nodeNotActive();}
 
 		catch( ExcEndEnergy e){

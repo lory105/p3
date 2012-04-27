@@ -36,6 +36,7 @@ class ReadURL {
 	      String inputLine;
 	      boolean find=false;
 
+	      connect.print("values read:", 0);
 	      while( read< 10){
 	         find=false;
 	         inputLine = in.readLine();

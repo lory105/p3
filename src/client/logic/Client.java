@@ -55,13 +55,14 @@ class Client {
 	
 	// function to send statistics to server
 	public void sendStats( Vector<Stat> stat ){
-		connect.print("Ready to send statistics to server..", 0);
+		connect.print("statistics ready to be sent to server..", 0);
 		
 		try{ receiverStat.printStats( connect.getParameters(), stat); }
 		catch( RemoteException e ){ 
 			connect.print( "RemoteException: some problem with server are occurred,\nperhaps the server URL isn't correct..\n" + e.getMessage(), 0 );
 		}
-		connect.print("Statistics sent correctly to the server\nEND", 0);
+		connect.print("statistics sent correctly to the server\nEND", 0);
+		System.out.println("statistics sent to server");
 	}
 	
 	

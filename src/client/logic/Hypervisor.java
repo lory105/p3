@@ -54,7 +54,7 @@ class Hypervisor extends Thread {
 	    activatorNodes= ActivatorNodes.getInstance();
 		activatorNodes.start();
 		
-		connect.print( proto + " simulation start..", 0);
+		connect.print( "\n" + proto + " simulation start..", 0);
 
 		while( nSimCont <= nSim ){
 			if( isInterrupted() ) throw new SecurityException();
@@ -69,8 +69,6 @@ class Hypervisor extends Thread {
 			generateNode( numberNode+1 );
 			findNeighbors();
 		
-			connect.print( "nodeActive: " + nodeActive, 0);
-
 			if( isInterrupted() ){ throw new SecurityException(); }
 			
 			// activates all node created
@@ -80,7 +78,7 @@ class Hypervisor extends Thread {
 				while( !endSimulation && nodeActive!=0 ){
 					lockEndSimulation.wait();
 				}
-				connect.print("Hypervisor awakened..", 0);
+				//connect.print("Hypervisor awakened..", 0);
 			}
 			
 			
@@ -88,7 +86,6 @@ class Hypervisor extends Thread {
 				for( int x=0; x<listNode.size(); x++ ){
 					synchronized( listNode.get(x).bufferMessage ){
 						if( listNode.get(x).isInterrupted() == false ){
-							connect.print( "interrompo nodo " + listNode.get(x), 0 );
 							listNode.get(x).interrupt();
 						}
 					}
@@ -96,19 +93,18 @@ class Hypervisor extends Thread {
 			}
 
 			// da togliere un po' di print !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-			connect.print( ( new Integer( listNode.size() ) ).toString(), 0 );
-			connect.print("invio dati all'elaboratore", 0);
+			connect.print("elaborates data to calculate statistic", 0);
 			connect.pullData( new Data( listNode, Node.getDetection() ) );
 				
 			connect.print( "endSimulation=" + endSimulation, 0 );
 			connect.print( "findClone=" + findClone, 0 );
 			connect.print( "nodeActive=" + nodeActive, 0 );
-			connect.print( "Ended simulation n." + nSimCont, 0 );
+			connect.print( "ended simulation n." + nSimCont, 0 );
 			nSimCont++;
 		}
 		
 		// send a null simulation that acts as a flag that the simulations were completed
-		connect.print("simulation ended..", 0);
+		connect.print("\nsimulation ended..", 0);
 		connect.pullData( new Data(null, -1) );
 		activatorNodes.interrupt();
 		
@@ -162,7 +158,7 @@ class Hypervisor extends Thread {
 			// choose a node to cloned and take its id
 			if(nodeCreated == nodiTot-1 && ! alreadyExistingPosition ){
 				int cloneRandomId = ( listNode.get( (int) ( Math.random()* (listNode.size()-1) ) ) ).getIdNode();
-				connect.print( "Nodi creati" + listNode.size() + " Id nodo clonato: " + cloneRandomId, 0);
+				connect.print( "nodes created: " + (listNode.size() +1) + ", id cloned node: " + cloneRandomId, 0);
 				
 				if( proto.equals("LSM") ){
 					listNode.add( new NodeLSM( cloneRandomId, pos, energyTot ) );
@@ -170,7 +166,6 @@ class Hypervisor extends Thread {
 				else{
 					listNode.add( new NodeRED( cloneRandomId, pos, energyTot, rand ) );
 				}
-				connect.print( "created clone node", 0);
 									
 				break;
 			}
@@ -216,7 +211,7 @@ class Hypervisor extends Thread {
 	// if a node found a clone, it stops all nodes and when nodeActive == 0 => the Hypervisor will awaken
 	public synchronized void findClone(){
 		Node.endSimulation=true;
-		connect.print( "find clone!", 0);
+		connect.print( "FIND CLONE!", 0);
 
 		findClone=true;
 	}
@@ -236,14 +231,14 @@ class Hypervisor extends Thread {
 	// function to update the number of active nodes: if a node goes to sleep, nodeActive is decremented
 	public synchronized void nodeActive(){
 		synchronized (nodeActive) {
-			System.out.println( "nodeActive++: " + ++nodeActive);
+			nodeActive++;
 		}
 	}
 
 	// function to update the number of active nodes: if a node wakes up, nodeActive is incremented
 	public synchronized void nodeNotActive(){
 		synchronized (nodeActive) {
-			System.out.println( "nodeActive--: " + --nodeActive);
+			nodeActive--;
 			if( nodeActive == 0 ) { Node.endSimulation=true; endSimulation(); }
 		}
 	}

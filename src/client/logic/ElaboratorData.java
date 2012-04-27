@@ -40,7 +40,6 @@ class ElaboratorData extends Thread {
 				}
 			
 				if( detection == -1 ){ // flag of end simulation, statistics can be sent to server
-					connect.print("simulation end, statistics ready to be sent to server..", 0);
 					connect.pushStats( stats );
 					simulationNumber=0;
 					throw new SecurityException();
