@@ -1,3 +1,4 @@
+// Class represents messages for control of clone
 package client.logic;
 
 

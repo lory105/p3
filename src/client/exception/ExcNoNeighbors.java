@@ -2,4 +2,6 @@
 package client.exception;
 
 
-public class ExcNoNeighbors extends Exception{}
+public class ExcNoNeighbors extends Exception{
+	private static final long serialVersionUID = 3L;  // unique id
+}

@@ -45,7 +45,6 @@ abstract class Node extends Thread {
 		hyper=h;
 		probAcceptLocation=p;
 		locationDestination = ld;
-		
 		energyTot= et;
 		energyToSend=ets;
 		energyToReceive=etr;
@@ -91,7 +90,7 @@ abstract class Node extends Thread {
 			}
 
 		}
-		// if node is interrupted during an active state se il nodo è interrotto in uno stato attivo
+		// if node is interrupted during an active state
 		catch( SecurityException e){
    	 		hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
 
@@ -102,7 +101,6 @@ abstract class Node extends Thread {
 		// if node is interrupted during an wait state 
 		catch( InterruptedException e){
    	 		hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
-   	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
    	 	}
 
 		catch( ExcNoNeighbors e){ hyper.nodeNotActive(); }
@@ -116,6 +114,7 @@ abstract class Node extends Thread {
 		}
 		
 	}
+	
 	
 	// function to check if simulation are ended
 	public void checkEndSimulazion() throws SecurityException{

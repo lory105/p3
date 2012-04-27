@@ -8,6 +8,7 @@ import java.io.*;
 
 
 class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStatInterface{
+	private static final long serialVersionUID = 9L;  // unique id
 	private FileWriter out;
 	
 	public ReceiverStatImp() throws RemoteException{}

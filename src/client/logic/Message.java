@@ -3,6 +3,6 @@ package client.logic;
 
 
 interface Message {
-	
+	// function to return identifier number of sender node
 	public int getIdSender();
 }

@@ -2,4 +2,6 @@
 package client.exception;
 
 
-public class ExcFindClone extends Exception {}
+public class ExcFindClone extends Exception {
+	private static final long serialVersionUID = 2L;  // unique id		
+}

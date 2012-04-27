@@ -2,7 +2,6 @@
 package client.logic;
 
 import java.util.*;
-
 import client.gui.Gui;
 
 
@@ -14,7 +13,7 @@ public class Connector {
 	private ElaboratorData elaborator=null;
 	private Client client=null;
 	
-	// function to read file cnfiguration fron URL   leggo il file dalla URL url e se la lettura va a buon fine, setto i parametri letti nell'hypervisor
+	// function to read configuration file from URL
 	public boolean readFile( String url ){
 		Object[] values= reader.read( url );
 		

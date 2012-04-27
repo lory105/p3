@@ -2,5 +2,7 @@
 package client.exception;
 
 
-public class ExcReadFile extends Exception {}
+public class ExcReadFile extends Exception {
+	private static final long serialVersionUID = 4L;  // unique id
+}
 

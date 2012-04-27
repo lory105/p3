@@ -5,7 +5,7 @@ import java.util.*;
 import java.io.Serializable;
 
 public class Stat implements Serializable {
-	
+	private static final long serialVersionUID = 10L;  // unique id
 	private Vector<Object[]> info = new Vector<Object[]>();
 	private Integer detection;
 	

@@ -1,3 +1,4 @@
+// Class represents the messages of location claim.
 package client.logic;
 
 

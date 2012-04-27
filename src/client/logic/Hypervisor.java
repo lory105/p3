@@ -32,7 +32,7 @@ class Hypervisor extends Thread {
 	private ActivatorNodes activatorNodes=null;
 	private Object lockEndSimulation= new Object();
 	private boolean endSimulation=false;			// if true => one nSimCont is finished
-	private boolean findClone=false;				// if true => one nSinCont has find clone ha trovato un clone
+	private boolean findClone=false;				// if true => one nSinCont has find clone
 	
 	
 	
@@ -72,7 +72,8 @@ class Hypervisor extends Thread {
 			connect.print( "nodeActive: " + nodeActive, 0);
 
 			if( isInterrupted() ){ throw new SecurityException(); }
-						
+			
+			// activates all node created
 			activatorNodes.pushVectorNodesToActive( listNode );
 	
 			synchronized (lockEndSimulation) {

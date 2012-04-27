@@ -10,12 +10,13 @@ import client.logic.Connector;
 
 
 public class Gui extends JFrame{
+	private static final long serialVersionUID = 5L;  // unique id
 	private Connector connect=null;
 	
 	private JLabel labelUrlRead=new JLabel("URL read value:");
 	private JLabel labelUrlSent=new JLabel("URL sent value:");
 	private JLabel labelInformationSimulation=new JLabel("Simulation progress:");
-	private JLabel labelOutputSent=new JLabel("Value sent:");
+	private JLabel labelOutputSent=new JLabel("Value to sent:");
 	
 	// link mio dropbox !!!
 	private JTextField urlToRead = new JTextField("http://dl.dropbox.com/u/24729735/project_configLSM.txt");
@@ -34,12 +35,12 @@ public class Gui extends JFrame{
 	// ActionListener for start button
 	class startClick implements ActionListener{
 		public void actionPerformed(ActionEvent e){
-		    textAreaInformation.setText(""); // ripulisco tutto il testo in ta 
-			textAreaInformation.append("Inizio ricerva file..\n");
+		    textAreaInformation.setText(""); 
+			textAreaInformation.append("Start searching files..\n");
 			
 			if( connect.readFile( urlToRead.getText() ) && connect.connectToServer( urlToSend.getText() ) ){
 				start.setEnabled(false);
-				textAreaInformation.append("File letto correttamente..\n" + "Inizio simulazioni..\n");
+				textAreaInformation.append("File read correctly..\n" + "Start simulation..\n");
 				connect.start();
 			}
 		}
@@ -50,7 +51,6 @@ public class Gui extends JFrame{
 		public void actionPerformed(ActionEvent e){
 			closeAll();
 			System.exit(0);
-			//setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); // associamo l'evento di chiusura al solito bottone di chiusura  !!!
 		}
 	}
 	
@@ -62,8 +62,9 @@ public class Gui extends JFrame{
 		}
 	}
 	
-	// class to menage gui event
+	// class to manage gui event
 	class GuiEvent extends AWTEvent{
+		private static final long serialVersionUID = 6L;  // unique id
 		public static final int EVENT_ID = AWTEvent.RESERVED_ID_MAX + 1;
 		private String str;
 

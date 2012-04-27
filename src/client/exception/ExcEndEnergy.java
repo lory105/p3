@@ -2,4 +2,6 @@
 package client.exception;
 
 
-public class ExcEndEnergy extends Exception{}
+public class ExcEndEnergy extends Exception{
+	private static final long serialVersionUID = 1L;  // unique id
+}
