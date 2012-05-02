@@ -66,12 +66,9 @@ abstract class Node extends Thread {
 					// if a node hasn't message to manage, it waits over bufferMessage
 					while( bufferMessage.isEmpty() ){
 						checkEndSimulazion();
-						//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 						hyper.nodeNotActive();
 						bufferMessage.wait();	
-						//if( isInterrupted() ) throw new SecurityException();
 						checkEndSimulazion();
-						//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 						// if a node wakes up => it has received a message
 						hyper.nodeActive(); 
 					}
@@ -91,17 +88,10 @@ abstract class Node extends Thread {
 
 		}
 		// if node is interrupted during an active state
-		catch( SecurityException e){
-   	 		//hyper.print( getName() + "securExc terminato " + this.getName(), 0 );
-
-   	 		// ottimizzare la memoria: if( closeAll ) faccio delle clear sui vettori
-   	 		hyper.nodeNotActive();
-   	 	}
+		catch( SecurityException e){ hyper.nodeNotActive();	}
 
 		// if node is interrupted during an wait state 
-		catch( InterruptedException e){
-   	 		//hyper.print( getName() + "interrExc terminato " + this.getName(), 0 );
-   	 	}
+		catch( InterruptedException e){}
 
 		catch( ExcNoNeighbors e){ hyper.nodeNotActive(); }
 		catch( ExcFindClone e ){ 
@@ -117,9 +107,7 @@ abstract class Node extends Thread {
 	
 	// function to check if simulation are ended
 	public void checkEndSimulazion() throws SecurityException{
-		//if( isInterrupted() ) throw new SecurityException();
 		if( endSimulation ) throw new SecurityException();
-		//synchronized( lockEndSim ){ if( endSimulation ) throw new SecurityException(); }
 	}
 	
 	// function to check if the node has no more neighbors
@@ -207,7 +195,6 @@ abstract class Node extends Thread {
 			}
 		}
 		return false;
-
 	}
 	
 

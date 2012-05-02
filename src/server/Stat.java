@@ -31,7 +31,6 @@ public class Stat implements Serializable {
 				output= (output + "	");
 			}
 			output= (output + detection.toString() );
-			
 			return output;
 	}
 	

@@ -35,7 +35,6 @@ class Hypervisor extends Thread {
 	private boolean findClone=false;				// if true => one nSinCont has find clone
 	
 	
-	
 	private Hypervisor( Connector c){ connect=c; }
 	
 	static Hypervisor getInstance( Connector c){
@@ -78,9 +77,7 @@ class Hypervisor extends Thread {
 				while( !endSimulation && nodeActive!=0 ){
 					lockEndSimulation.wait();
 				}
-				//connect.print("Hypervisor awakened..", 0);
 			}
-			
 			
 			if( findClone ){
 				for( int x=0; x<listNode.size(); x++ ){

@@ -122,7 +122,6 @@ class ElaboratorData extends Thread {
 		Object[] memoryMsg= { memoryMsgMin, memoryMsgMax, memoryMsgAvg, memoryMsgSD };
 		
 		
-		//Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal );
 		Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detection );
 		stats.add( stat );
 		
