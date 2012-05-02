@@ -38,7 +38,7 @@ class NodeLSM extends Node {
 					checkEndSimulazion();
 					Node.detection=1; throw new ExcFindClone();
 				} 
-				Node.detection=1;
+
 				memoryMsg.add(mc);
 			}
 			else{
@@ -63,7 +63,7 @@ class NodeLSM extends Node {
 			checkEndSimulazion();
 			Node.detection=1; throw new ExcFindClone();
 		}
-		Node.detection=1;
+
 		
 		memoryMsg.add(msg);
 		

@@ -10,7 +10,7 @@ class ElaboratorData extends Thread {
 
 	Vector<Data> bufferData=new Vector<Data>();	// received data to be processed
 	Vector<Stat> stats= new Vector<Stat>();   	// statistics ready to be sent
-	Integer detectionGlobal=0;
+	Integer detection=0;
 	int simulationNumber=0;
 	
 	private ElaboratorData(Connector c){ connect=c; }
@@ -25,10 +25,8 @@ class ElaboratorData extends Thread {
 		try{
 			Data data;
 			Vector<Node> vectorNodeToAnalize=null;
-			int detection;
 			
 			while(true){
-				detection=0;
 				if( isInterrupted() ) throw new SecurityException();
 				synchronized (bufferData){
 					
@@ -36,7 +34,6 @@ class ElaboratorData extends Thread {
 					data= bufferData.remove(0);
 					vectorNodeToAnalize = data.getListNode();
 					detection = data.getDetection();
-					if( detection ==1 ) detectionGlobal=new Integer( detection );
 				}
 			
 				if( detection == -1 ){ // flag of end simulation, statistics can be sent to server
@@ -125,7 +122,8 @@ class ElaboratorData extends Thread {
 		Object[] memoryMsg= { memoryMsgMin, memoryMsgMax, memoryMsgAvg, memoryMsgSD };
 		
 		
-		Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal );
+		//Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detectionGlobal );
+		Stat stat = new Stat( sentMessages, receivedMessages, signatureVerified, energyUsed, memoryMsg, detection );
 		stats.add( stat );
 		
 		simulationNumber++;

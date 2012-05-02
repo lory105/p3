@@ -19,5 +19,4 @@ class Data {
 	// function to return detection parameter (it indicates if in the simulation, at least a node does the detection )
 	public int getDetection(){ return detection; }
 		
-	
 }

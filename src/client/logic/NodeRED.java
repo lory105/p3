@@ -41,7 +41,7 @@ class NodeRED extends Node {
 					checkEndSimulazion();
 					Node.detection=1; throw new ExcFindClone();
 				} 
-				Node.detection=1;
+				
 				memoryMsg.add(mc);
 			}
 			else{
@@ -70,7 +70,6 @@ class NodeRED extends Node {
 				checkEndSimulazion();
 				Node.detection=1; throw new ExcFindClone();
 			}
-			Node.detection=1;
 		
 			memoryMsg.add(msg);
 			return;

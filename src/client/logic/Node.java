@@ -265,9 +265,7 @@ abstract class Node extends Thread {
 			en= (energyTot-energy);
 			
 		int[] datas= { sentMessages, receivedMessages, signatureVerified, en, memoryMsg.size() };
-
 		return datas;
-		
 	}
 
 }

@@ -1,3 +1,4 @@
+// Common interface for message used to implements ''Wireless Sensor Networks''
 package client.logic;
 
 
