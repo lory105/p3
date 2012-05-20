@@ -37,6 +37,7 @@ class Hypervisor extends Thread {
 	
 	private Hypervisor( Connector c){ connect=c; }
 	
+	// function to return the instance of Singleton class
 	static Hypervisor getInstance( Connector c){
 		if( instance == null){
 			instance=new Hypervisor(c);
@@ -89,20 +90,16 @@ class Hypervisor extends Thread {
 				}
 			}
 
-			// da togliere un po' di print !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 			connect.print("elaborates data to calculate statistic", 0);
-			connect.pullData( new Data( listNode, Node.getDetection() ) );
-				
-			connect.print( "endSimulation=" + endSimulation, 0 );
-			connect.print( "findClone=" + findClone, 0 );
-			connect.print( "nodeActive=" + nodeActive, 0 );
+			connect.pushData( new Data( listNode, Node.getDetection() ) );
+
 			connect.print( "ended simulation n." + nSimCont, 0 );
 			nSimCont++;
 		}
 		
 		// send a null simulation that acts as a flag that the simulations were completed
 		connect.print("\nsimulation ended..", 0);
-		connect.pullData( new Data(null, -1) );
+		connect.pushData( new Data(null, -1) );
 		activatorNodes.interrupt();
 		
 		}

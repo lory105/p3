@@ -4,6 +4,8 @@ package client.logic;
 import java.rmi.*;
 import java.util.*;
 
+import common.Stat;
+
 
 public interface ReceiverStatInterface extends Remote {
 	

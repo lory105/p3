@@ -1,0 +1,8 @@
+How to start the application.
+
+From terminal:
+go into directory "bin" and write this commands:
+
+- rmiregistry
+- java server.ServerRMI
+- java client.logic.Client

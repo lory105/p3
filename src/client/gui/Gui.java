@@ -3,6 +3,7 @@ package client.gui;
 
 import javax.swing.*;
 import javax.swing.GroupLayout.Alignment;
+
 import java.awt.*;
 import java.awt.event.*;
 
@@ -18,10 +19,7 @@ public class Gui extends JFrame{
 	private JLabel labelInformationSimulation=new JLabel("Simulation progress:");
 	private JLabel labelOutputSent=new JLabel("Value to sent:");
 	
-	// link mio dropbox !!!
-	private JTextField urlToRead = new JTextField("http://dl.dropbox.com/u/24729735/project_configLSM.txt");
-	// link prof !!!!
-	//JTextField urlToRead = new JTextField("http://www.math.unipd.it/~conti/teaching/PCD1112/project_config.txt");
+	JTextField urlToRead = new JTextField("http://www.math.unipd.it/~conti/teaching/PCD1112/project_config.txt");
 	private JTextField urlToSend = new JTextField("localhost");
 	
 	private JButton start = new JButton("Start");
@@ -81,6 +79,7 @@ public class Gui extends JFrame{
 		super( title );
 		connect=c;
 		
+		setIconImage(Toolkit.getDefaultToolkit().getImage(getClass().getResource("images/network.png")));
 		setSize(900, 630);
 		
 		// buttons are connected to their listeners
@@ -137,13 +136,11 @@ public class Gui extends JFrame{
 		
 		addWindowListener( new WindowAdapter() {
 			   public void windowClosing(WindowEvent we) {
-			      System.out.println("E' stato premuto il pulsante X rosso");
 			      if( ! start.isEnabled() )
 			    	  connect.closeAll();
 			      System.exit(0);
 			   }
 			   public void windowClosed(WindowEvent we) {
-				  System.out.println("E' stato premuto il pulsante X");
 				  if( ! start.isEnabled() )
 					  connect.closeAll();
 				  System.exit(0);
@@ -180,7 +177,7 @@ public class Gui extends JFrame{
 		connect.closeAll();
 	}
 	
-	
+	// function to process the gui's events
 	protected void processEvent( AWTEvent event){
 		if ( event instanceof GuiEvent ){
 			GuiEvent ev = (GuiEvent) event;

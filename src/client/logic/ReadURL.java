@@ -13,6 +13,7 @@ class ReadURL {
 
 	private ReadURL( Connector c){ connect=c; }
 	
+	// function to return the instance of Singleton class
 	public static ReadURL getInstance( Connector c){
 		if( instance == null )
 			instance=new ReadURL(c);
@@ -75,7 +76,7 @@ class ReadURL {
 	      
 	 	 in.close();
 	 	 
-       } // fine try
+       } // end try
        catch ( ExcReadFile e){ connect.print( "Configuration file not correct.\nEND", 0); return null; }
        catch ( MalformedURLException e ){ connect.print( e.getMessage() + "\nUrl of configuration file isn't correct.\nEND", 0); return null; }
        catch ( IOException e ){ connect.print( e.getMessage() + "\nMake sure you are connected to the network or check the URL you entered.", 0); return null; }

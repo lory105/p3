@@ -12,6 +12,7 @@ class ActivatorNodes extends Thread{
 	
 	private ActivatorNodes(){}
 
+	// function to return the instance of Singleton class
 	static ActivatorNodes getInstance(){
 		if( instance== null )
 			instance= new ActivatorNodes();

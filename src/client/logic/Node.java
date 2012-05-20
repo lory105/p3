@@ -10,7 +10,7 @@ import client.exception.ExcNoNeighbors;
 
 abstract class Node extends Thread {
 	static Hypervisor hyper=null;
-	static int detection = 0; 	   // detection flag. if almost one node makes detection detection==1
+	static int detection = 0; 	   // detection flag
 	static Object lockEndSim = new Object();
 	static boolean endSimulation = false;
 	
@@ -73,7 +73,7 @@ abstract class Node extends Thread {
 						hyper.nodeActive(); 
 					}
 					
-					msg = bufferMessage.remove(0);
+					msg = popMessage();
 				}
 				checkEndSimulazion();
 				if( msg instanceof MessageControl){
@@ -211,6 +211,10 @@ abstract class Node extends Thread {
 	}
 	
 	
+	// takes the first message in the buffer of messages received
+	public Message popMessage(){
+		return bufferMessage.remove(0);
+	}
 	
 	// returns the nearest neighbor to the position p, also monitoring own position
 	public Node nearestNeighbor(Position p){ 

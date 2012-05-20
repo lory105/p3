@@ -2,6 +2,9 @@
 package client.logic;
 
 import java.util.*;
+
+import common.Stat;
+
 import client.gui.Gui;
 
 
@@ -46,8 +49,8 @@ public class Connector {
 	
 	
 	// at the end of each simulation, hypervisor sends the vector of the nodes to ElaboratorData which reads the data 
-	public void pullData( Data d ){
-		elaborator.push( d );
+	public void pushData( Data d ){
+		elaborator.pushData( d );
 	}
 	
 	// at the end of all simulation, statistics are sent to server  

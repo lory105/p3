@@ -5,6 +5,8 @@ import java.util.*;
 import java.rmi.*;
 import java.net.*;
 
+import common.Stat;
+
 import client.gui.Gui;
 import server.ReceiverStatInterface;
 
@@ -65,7 +67,7 @@ class Client {
 		System.out.println("statistics sent to server");
 	}
 	
-	
+	// main function of client that starts all application
 	public static void main(String[] args){
 
 		Connector connect= new Connector();
@@ -73,7 +75,7 @@ class Client {
 		ReadURL reader = ReadURL.getInstance(connect);
 		Hypervisor hyper = Hypervisor.getInstance( connect );
 		ElaboratorData elaborator = ElaboratorData.getInstance(connect);
-		Gui mf= new Gui(connect, "Simulation" );
+		Gui mf= new Gui(connect, " Wireless Sensor Networks - Simulation" );
 		
 		connect.setParameters( hyper, mf, reader, elaborator, client );
 	}

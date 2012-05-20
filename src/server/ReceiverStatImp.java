@@ -14,16 +14,13 @@ class ReceiverStatImp extends UnicastRemoteObject implements ReceiverStatInterfa
 	public ReceiverStatImp() throws RemoteException{}
 	
 	// function that prints the statistics provided by the client
-	public void printStats( Object[] v, Vector<client.logic.Stat> s ) throws RemoteException{
+	public void printStats( Object[] v, Vector<common.Stat> s ) throws RemoteException{
 		try{
 		out=new FileWriter(new File("output.txt"),true);
 		
 		synchronized( out ){
 			System.out.println("Print statistic in file output.txt");
 
-								
-				// da togliere !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-				out.append( "Simulation:\n");
 				
 				for( int x=0; x<s.size(); x++){
 					

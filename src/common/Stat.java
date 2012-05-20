@@ -1,5 +1,5 @@
 // Class represents the statistics for server
-package client.logic;
+package common;
 
 import java.util.*;
 import java.io.Serializable;
@@ -11,7 +11,7 @@ public class Stat implements Serializable {
 	private Vector<Object[]> info = new Vector<Object[]>();
 	private Integer detection;
 	
-	Stat( Object[] sent, Object[] received, Object[] signature, Object[] energy, Object[] memory, Integer d ){
+	public Stat( Object[] sent, Object[] received, Object[] signature, Object[] energy, Object[] memory, Integer d ){
 		info.add(sent);
 		info.add(received);
 		info.add(signature);
@@ -20,7 +20,7 @@ public class Stat implements Serializable {
 		detection=d;
 	}
 	
-	
+	// function to prints the values ​​of the statistics 
 	public String printValues(){
 		String output=new String("");
 		
@@ -29,8 +29,8 @@ public class Stat implements Serializable {
 				for( int y=0; y< info.get(x).length; y++)
 					output=( output + ( (info.get(x))[y] ).toString() + " " ) ;
 				
-				// da tolgiere !!!!!!!!!!!!!!
 				output= (output + "	");
+				
 			}
 			output= (output + detection.toString() );
 			return output;

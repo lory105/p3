@@ -3,6 +3,8 @@ package client.logic;
 
 import java.util.*;
 
+import common.Stat;
+
 
 class ElaboratorData extends Thread {
 	static ElaboratorData instance = null;
@@ -15,6 +17,7 @@ class ElaboratorData extends Thread {
 	
 	private ElaboratorData(Connector c){ connect=c; }
 	
+	// function to return the instance of Singleton class
 	public static ElaboratorData getInstance( Connector c){
 		if( instance==null)
 			instance=new ElaboratorData(c);
@@ -42,7 +45,7 @@ class ElaboratorData extends Thread {
 					throw new SecurityException();
 				}
 				if( isInterrupted() ) throw new SecurityException();
-				else readDate( vectorNodeToAnalize );
+				else popDate( vectorNodeToAnalize );
 				
 			}
 		}
@@ -53,7 +56,7 @@ class ElaboratorData extends Thread {
 	}
 	
 	// read from a list of nodes of a single simulation the values ​​contained in the nodes
-	private void readDate( Vector<Node> vc){
+	private void popDate( Vector<Node> vc){
 		Integer sentMessagesTot=0,      sentMessagesMin=Integer.MAX_VALUE,      sentMessagesMax=0;      Float sentMessagesAvg=0F,		sentMessagesSD=0F;
 		Integer receivedMessagesTot=0,  receivedMessagesMin=Integer.MAX_VALUE,  receivedMessagesMax=0;  Float receivedMessagesAvg=0F,	receivedMessagesSD=0F;
 		Integer	signatureVerifiedTot=0, signatureVerifiedMin=Integer.MAX_VALUE, signatureVerifiedMax=0; Float signatureVerifiedAvg=0F,	signatureVerifiedSD=0F; 
@@ -130,7 +133,7 @@ class ElaboratorData extends Thread {
 	}
 	
 	// received data to be processed
-	public void push( Data d ){
+	public void pushData( Data d ){
 		synchronized (bufferData) {		
 			bufferData.add( d );
 			bufferData.notify();
